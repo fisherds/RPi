@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <title>Hangman</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">Hangman</a>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="admin.html">Admin Page</a>
+      </li>
+    </ul>
+  </nav>
+  <div id="playerPage" class="container page-container">
+    Word:
+    <div class="row justify-content-center">
+      <div id="displayWord" class="col text-center">____N__</div>
+    </div>
+    <hr>
+    Incorrect Letters:
+    <div class="row justify-content-center">
+      <div id="incorrectLetters" class="col text-center">ABCDFS</div>
+    </div>
+    <hr>
+    <div id="keyboard">
+      <div data-key="A" class="key">A</div>
+      <div data-key="B" class="key">B</div>
+      <div data-key="C" class="key">C</div>
+      <div data-key="D" class="key">D</div>
+      <div data-key="E" class="key">E</div>
+      <div data-key="F" class="key">F</div>
+      <div data-key="G" class="key">G</div>
+      <div data-key="H" class="key">H</div>
+      <div data-key="I" class="key">I</div>
+      <div data-key="J" class="key">J</div>
+      <div data-key="K" class="key">K</div>
+      <div data-key="L" class="key">L</div>
+      <div data-key="M" class="key">M</div>
+      <div data-key="N" class="key">N</div>
+      <div data-key="O" class="key">O</div>
+      <div data-key="P" class="key">P</div>
+      <div data-key="Q" class="key">Q</div>
+      <div data-key="R" class="key">R</div>
+      <div data-key="S" class="key">S</div>
+      <div data-key="T" class="key">T</div>
+      <div data-key="U" class="key">U</div>
+      <div data-key="V" class="key">V</div>
+      <div data-key="W" class="key">W</div>
+      <div data-key="X" class="key">X</div>
+      <div data-key="Y" class="key">Y</div>
+      <div data-key="Z" class="key">Z</div>
+    </div>
+    <button id="newGameButton" type="button" class="d-block ml-auto btn btn-outline-secondary">New Game</button>
+
+  </div>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap-material-design.js"></script>
+  <script>$("body").bootstrapMaterialDesign();</script>
+  <script src="scripts/main.js"></script>
+</body>
+
+</html>
