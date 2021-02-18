@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-# File name   : init
-# Description : Control Servos
-# Author      : William
-# Date        : 2019/02/23
 import time
 import Adafruit_PCA9685
 
