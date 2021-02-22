@@ -1,0 +1,56 @@
+body {
+    background: #DDDDDD;
+}
+
+.navbar {
+    background-color: #800000;
+    color: white;
+}
+
+.page-container {
+    margin-top: 75px;
+}
+
+#displayWord, #incorrectLetters {
+    font: 2em 'Courier New', monospace;
+    letter-spacing: 10px;
+}
+
+/* Keyboard CSS from: https://codepen.io/giumagnani/pen/jBNJKw */
+#keyboard {
+    display: block;
+    margin: auto;
+}
+
+.key {
+    box-sizing: border-box;
+    line-height: 50px;
+    font-size: 22px;
+    text-align: center;
+    width: 50px;
+    color: #555;
+    cursor: pointer;
+    margin: 2px;
+    height: 50px;
+    border-color: #f2f2f2;
+    border-style: solid;
+    text-shadow: 0 0.5px 1px #777, 0 2px 6px #f2f2f2;
+    border-width: 1px;
+    border-radius: 10px;
+    background: -webkit-linear-gradient(top, #f9f9f9 0%, #D2D2D2 80%, #c0c0c0 100%);
+    font-family: sans-serif;
+    display: inline-block;
+    transition: box-shadow 0.3s ease, transform 0.15s ease;
+    box-shadow: 0 0 1px #888, 0 1px 0 #fff, 0 6px 0 #C0C0C0, 0 8px 17px rgba(#444, 0.4), 2px 1px 4px rgba(#444, 0.25), -2px 1px 4px rgba(#444, 0.25), 0 9px 16px rgba(#444, 0.1);
+}
+
+.key:hover,
+.key:focus {
+    box-shadow: 0 0 1px #888, 0 1px 0 #fff, 0 4px 0 #C0C0C0, 0 2px 35px rgba(#444, 0.3), 2px 2px 4px rgba(#444, 0.25), -2px 2px 4px rgba(#444, 0.25), 0 7px 4px rgba(#444, 0.1);
+    transform: translateY(2px);
+}
+
+.key:active {
+    box-shadow: 0 0 1px #888, 0 1px 0 #fff, 0 0 0 #C0C0C0, 0 0px 30px rgba(#444, 0.15), 2px 2px 4px rgba(#444, 0.25), -2px 2px 4px rgba(#444, 0.25), 0 0px 4px rgba(#444, 0.25);
+    transform: translateY(4px);
+}

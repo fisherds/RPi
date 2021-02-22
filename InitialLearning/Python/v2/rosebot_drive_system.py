@@ -162,7 +162,17 @@ class DriveSystem(object):
         # TODO: Implement this method.
         # ---------------------------------------------------------------------
         self.go(speed, speed)
-        time.sleep(inches)  # Requires testing to make a formula
+        if speed < 0:
+            speed = -speed  # Convert the speed to a positive for the formula
+        if inches < 0:
+            inches = -inches # Make sure the user put in a positive inches regardless of direction
+
+        if speed < 40:
+            print("Warning: Only really works for speeds 40+")
+        inches_per_second = 0.172 * speed + 2.15  # from an excel sheet trend line
+        # FYI only holds for values 40 and up
+        seconds = inches / inches_per_second
+        time.sleep(seconds)  # Requires testing to make a formula
         self.stop()
 
     def spin_in_place_for_seconds(self, seconds, speed=50):

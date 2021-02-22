@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <title>Hangman Admin</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="/">Hangman</a>
+  </nav>
+  <div id="adminPage" class="container page-container">
+    Create:
+    <div class="row justify-content-center">
+      <div class="col-3"></div>
+      <div class="col-6 form-group">
+        <label for="createWordInput" class="bmd-label-floating">word</label>
+        <input type="text" class="form-control" id="createWordInput">
+      </div>
+      <span class="col-3 form-group bmd-form-group">
+        <button id="addButton" type="button" class="btn btn-primary">Create</button>
+      </span>
+    </div>
+    <hr>
+    Read All:
+    <div class="row justify-content-center">
+      <div class="col-9"></div>
+      <span class="col-3 form-group bmd-form-group">
+        <button id="readAllButton" type="button" class="btn btn-primary">Read All</button>
+      </span>
+    </div>
+    <div class="row justify-content-center">
+      <div id="readAllOutput" class="col text-center">--</div>
+    </div>
+    <hr>
+    Read Single:
+    <div class="row justify-content-center">
+      <div class="col-3"></div>
+      <div class="col-6 form-group">
+        <label for="readIndexInput" class="bmd-label-floating">index</label>
+        <input type="text" class="form-control" id="readIndexInput">
+      </div>
+      <span class="col-3 form-group bmd-form-group">
+        <button id="readSingleButton" type="button" class="btn btn-primary">Read</button>
+      </span>
+    </div>
+    <div class="row justify-content-center">
+      <div id="readSingleOutput" class="col text-center">--</div>
+    </div>
+    <hr>
+    Update:
+    <div class="row justify-content-center">
+      <div class="col-3"></div>
+      <div class="col-3 form-group">
+        <label for="updateIndexInput" class="bmd-label-floating">index</label>
+        <input type="text" class="form-control" id="updateIndexInput">
+      </div>
+      <div class="col-3 form-group">
+        <label for="updateWordInput" class="bmd-label-floating">word</label>
+        <input type="text" class="form-control" id="updateWordInput">
+      </div>
+      <span class="col-3 form-group bmd-form-group">
+        <button id="updateButton" type="button" class="btn btn-primary">Update</button>
+      </span>
+    </div>
+    <hr>
+    Delete:
+    <div class="row justify-content-center">
+      <div class="col-3"></div>
+      <div class="col-6 form-group">
+        <label for="deleteIndexInput" class="bmd-label-floating">index</label>
+        <input type="text" class="form-control" id="deleteIndexInput">
+      </div>
+      <span class="col-3 form-group bmd-form-group">
+        <button id="deleteButton" type="button" class="btn btn-primary">Delete</button>
+      </span>
+    </div>
+    <hr>
+  </div>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap-material-design.js"></script>
+  <script>
+    $("body").bootstrapMaterialDesign();
+  </script>
+  <script src="scripts/main.js"></script>
+</body>
+
+</html>

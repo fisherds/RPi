@@ -13,6 +13,9 @@ SERVO_PIN_GRIPPER = 15
 
 ALL_SERVOS = [11, 12, 13, 14, 15]
 
+# The PWM duty cycle range of the servos we use is approximately 100 to 560,
+# which corresponds to a rotation range of approximately 0 ° to 180 °.
+
 while 1:
 	for servo_pin in ALL_SERVOS:
 		if servo_pin == SERVO_PIN_CAMERA:
@@ -26,6 +29,6 @@ while 1:
 			pwm.set_pwm(servo_pin, 0, 350)
 			print("Move 350")
 			time.sleep(1)
-			pwm.set_pwm(servo_pin, 0, 300)
+			pwm.set_pwm(servo_pin, 0, 300)  # Center 90
 			print("Move 300")
 			time.sleep(1)
