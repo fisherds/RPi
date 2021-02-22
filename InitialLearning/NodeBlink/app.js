@@ -13,7 +13,7 @@ app.use('/api/', bodyParser.json());
 
 // Load data from a file.
 let data = [];
-const serverSideStorage = "../data/db.json";
+const serverSideStorage = "./data/db.json";
 fs.readFile(serverSideStorage, function (err, buf) {
   if (err) {
     console.log("error: ", err);
