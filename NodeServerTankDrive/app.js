@@ -1,15 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const rosebot = require("./rosebot");
 
 // Setup
 const app = express();
 app.use('/', express.static("public"));
 app.use('/api/', bodyParser.json());
 
+const robot = new rosebot.Rosebot()
+
 // Drive
 app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     let leftSpeed = parseInt(req.params.leftSpeed);
     let rightSpeed = parseInt(req.params.rightSpeed);
+    robot.driveSystem.rightMotor.go();
+
     res.json({
         "status": "ok",
         "rightSpeed": rightSpeed,
@@ -17,6 +22,7 @@ app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     });
 });
 app.get("/api/motor/stop", function (req, res) {
+    robot.driveSystem.rightMotor.stop();
     res.json({
         "status": "ok"
     });
