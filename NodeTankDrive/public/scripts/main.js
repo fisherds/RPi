@@ -1,7 +1,7 @@
 var rhit = rhit || {};
 // const apiUrl = "//localhost:3000/api";
-// const apiUrl = "//fisherds-pi400.wlan.rose-hulman.edu:3000/api/";
-const apiUrl = "//fisherds-tank.dhcp.rose-hulman.edu:3000/api/";
+// const apiUrl = "//fisherds-pi400.wlan.rose-hulman.edu:3000/api";
+const apiUrl = "//fisherds-tank.dhcp.rose-hulman.edu:3000/api";
 
 //Reference :
 // GET    /api/motor/go/:leftSpeed/:rightSpeed
@@ -25,8 +25,11 @@ rhit.TankDriveController = class {
 	}
 	sendDriveCommand(leftMultiplier, rightMultiplier) {
 		console.log("Multipliers:", leftMultiplier, rightMultiplier);
+		const baseSpeed = parseFloat(document.querySelector("#baseSpeed").value)
+		const leftSpeed = Math.round(baseSpeed * leftMultiplier);
+		const rightSpeed = Math.round(baseSpeed * rightMultiplier);
 		console.log("Speeds:", leftSpeed, rightSpeed);
-		// fetch(`${apiUrl}/ledon`);
+		fetch(`${apiUrl}/motor/go/${leftSpeed}/${rightSpeed}`);
 	}
 }
 
