@@ -1,0 +1,61 @@
+body {
+    background: #DDDDDD;
+}
+
+.navbar {
+    background-color: #800000;
+    color: white;
+}
+
+.page-container {
+    margin-top: 75px;
+}
+
+body {
+    background: #DDDDDD;
+}
+
+.navbar {
+    background-color: #800000;
+    color: white;
+}
+
+.page-container {
+    margin-top: 75px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#sliderContainer {
+    margin: 10px;
+    width: 300px;
+}
+#sliderContainer input {
+    width: 100%;
+}
+
+#driveGrid .driveButton {
+    background-color: #80000080;
+    color: white;
+    margin: 0;
+    padding: 0;
+    font-size: 35px;
+    font-weight: 500;
+} 
+
+#driveGrid {
+    height: 300px;
+    width: 300px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+#spinButtons {
+    margin-top: 40px
+}
+
+#spinButtons .driveButton {
+    padding-top: 20%;
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <title>Node Blink</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">Node Blink</a>
+  </nav>
+  <div id="mainPage" class="container page-container">
+
+    <div class="row justify-content-center">
+      <div class="col-4">
+        <button type="button" class="btn btn-outline-primary btn-block" id="ledOnButton">LED On</button>
+      </div>
+      <div class="col-4">
+        <button type="button" class="btn btn-outline-primary btn-block" id="ledOffButton">LED Off</button>
+      </div>
+    </div>
+    <hr>
+    <div class="row justify-content-center">
+      <div class="col-6">
+        <button type="button" class="btn btn-outline-primary btn-block" id="readButton">Read Pushbutton</button>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col text-center">
+        <div id="pushbuttonOutput">--</div>
+      </div>
+    </div>
+
+  </div>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap-material-design.js"></script>
+  <script>
+    $("body").bootstrapMaterialDesign();
+  </script>
+  <script src="scripts/main.js"></script>
+</body>
+
+</html>
