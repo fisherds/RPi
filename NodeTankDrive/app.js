@@ -14,7 +14,7 @@ app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     let leftSpeed = parseInt(req.params.leftSpeed);
     let rightSpeed = parseInt(req.params.rightSpeed);
     console.log(`Motor go ${leftSpeed} ${rightSpeed}`);
-    robot.driveSystem.rightMotor.go();
+    robot.driveSystem.rightMotor.go(leftSpeed, rightSpeed);
     res.json({
         "status": "ok",
         "rightSpeed": rightSpeed,
