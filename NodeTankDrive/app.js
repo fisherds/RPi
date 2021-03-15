@@ -13,8 +13,8 @@ const robot = new rosebot.Rosebot()
 app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     let leftSpeed = parseInt(req.params.leftSpeed);
     let rightSpeed = parseInt(req.params.rightSpeed);
-    robot.driveSystem.rightMotor.go();
-
+    console.log(`Motor go ${leftSpeed} ${rightSpeed}`);
+    robot.driveSystem.rightMotor.go(leftSpeed, rightSpeed);
     res.json({
         "status": "ok",
         "rightSpeed": rightSpeed,
