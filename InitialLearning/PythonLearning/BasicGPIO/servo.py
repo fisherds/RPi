@@ -1,19 +1,22 @@
 import gpiozero as gz
 import time
 
-def servoSweep():
-    servo = gz.Servo(17)
+def servo_sweep():
+    servo = gz.Servo(13)
 
     while True:
         servo.min()
-        time.sleep(3)
+        print("min")
+        time.sleep(2)
         servo.mid()
         time.sleep(2)
+        print("mid")
         servo.max()
-        time.sleep(3)
+        time.sleep(2)
+        print("max")
 
 def main():
     print("Ready")
-    servoSweep()
+    servo_sweep()
 
 main()
