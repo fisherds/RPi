@@ -1,8 +1,16 @@
 import gpiozero as gz
 import time
 
+
+def go_to_angle():
+    servo = gz.AngularServo(17, min_angle=-90, max_angle=90)
+
+    while True:
+        angle = int(input("Enter an integer for angle: "))
+        servo.angle = angle
+
 def servo_sweep():
-    servo = gz.Servo(13)
+    servo = gz.Servo(17)
 
     while True:
         servo.min()
@@ -18,5 +26,6 @@ def servo_sweep():
 def main():
     print("Ready")
     servo_sweep()
+    go_to_angle()
 
 main()
