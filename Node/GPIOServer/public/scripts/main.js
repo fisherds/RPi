@@ -9,23 +9,37 @@ const apiUrl = "//localhost:3000/api";
 
 rhit.LedController = class {
 	constructor() {
-		document.querySelector("#ledOnButton").onclick = (event) => {
-			this.handleLedOn();
+		document.querySelector("#redLedOnButton").onclick = (event) => {
+			this.handleLedOn('r');
 		}
-		document.querySelector("#ledOffButton").onclick = (event) => {
-			this.handleLedOff();
+		document.querySelector("#redLedOffButton").onclick = (event) => {
+			this.handleLedOff('r');
+		}
+
+		document.querySelector("#yellowLedOnButton").onclick = (event) => {
+			this.handleLedOn("y");
+		}
+		document.querySelector("#yellowLedOffButton").onclick = (event) => {
+			this.handleLedOff("y");
+		}
+
+		document.querySelector("#blueLedOnButton").onclick = (event) => {
+			this.handleLedOn("b");
+		}
+		document.querySelector("#blueLedOffButton").onclick = (event) => {
+			this.handleLedOff("b");
 		}
 		document.querySelector("#readButton").onclick = (event) => {
 			this.handleReadPushbuton();
 		}
 	}
-	handleLedOn() {
+	handleLedOn(color) {
 		console.log("Turn the LED on");
-		fetch(`${apiUrl}/ledon`);
+		fetch(`${apiUrl}/ledon/${color}`);
 	}
-	handleLedOff() {
+	handleLedOff(color) {
 		console.log("Turn the LED off");
-		fetch(`${apiUrl}/ledoff`);
+		fetch(`${apiUrl}/ledoff/${color}`);
 	}
 
 	async handleReadPushbuton() {

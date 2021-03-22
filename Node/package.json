@@ -1,0 +1,23 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "Global Node package for things we'll install",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Fork of https://github.com/ME435/ME435-Personal-Repo-Template"
+  },
+  "keywords": [
+    "Pi"
+  ],
+  "author": "David Fisher and YOUR_NAME_HERE",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pigpio": "^3.3.0",
+    "prompt-sync": "^4.2.0"
+  }
+}
