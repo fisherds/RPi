@@ -1,7 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const fs = require("fs");
-// https://github.com/fivdi/pigpio
 const Gpio = require('pigpio').Gpio;
 
 // Setup
