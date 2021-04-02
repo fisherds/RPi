@@ -1,7 +1,5 @@
 var rhit = rhit || {};
-const apiUrl = "//localhost:3000/api";
-// const apiUrl = "//fisherds-pi400.wlan.rose-hulman.edu:3000/api/";
-
+const apiUrl = "api";
 // Reference:
 //  GET /api/ledon
 //  GET /api/ledoff
@@ -9,6 +7,10 @@ const apiUrl = "//localhost:3000/api";
 
 //  GET /api/ledon/:color
 //  GET /api/ledoff/:color
+
+//  GET /api/servo/:angle
+//  GET /api/motor/:pwm
+
 
 rhit.LedController = class {
 	constructor() {
@@ -33,6 +35,18 @@ rhit.LedController = class {
 		document.querySelector("#readButton").onclick = (event) => {
 			this.handleReadPushbuton();
 		}
+
+		document.querySelector("#servoSlider").onchange = (event) => {
+			console.log("Servo slider = ", event.target.value);
+			fetch(`${apiUrl}/servo/${event.target.value}`);
+		}
+
+		document.querySelector("#motorSlider").onchange = (event) => {
+			console.log("Motor slider = ", event.target.value);
+			fetch(`${apiUrl}/motor/${event.target.value}`);
+		}
+
+		
 	}
 	handleLedOn(color) {
 		console.log("Turn the LED on");

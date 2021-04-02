@@ -10,6 +10,6 @@ import rosebot_drive_system
 ###############################################################################
 #    RoseBot class.
 ###############################################################################
-class RoseBot(object):
+class RoseBot():
     def __init__(self):
         self.drive_system = rosebot_drive_system.DriveSystem()

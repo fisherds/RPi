@@ -3,6 +3,7 @@ Authors:  Dave Fisher and PUT_YOUR_NAME_HERE.
 """
 # TODO: 1.  Put your name in the above.
 
+import rosebot
 import time
 
 
@@ -21,7 +22,7 @@ def run_test_drive_system():
     # -------------------------------------------------------------------------
     # TODO: 2. Construct a robot, that is, a rosebot.RoseBot() object.
     # -------------------------------------------------------------------------
-    robot = None
+    robot = rosebot.RoseBot()
 
     # -------------------------------------------------------------------------
     # STUDENTS: Do the work in this module as follows.
@@ -36,10 +37,10 @@ def run_test_drive_system():
     #        RE-commenting out the previous test to reduce the testing.
     # -------------------------------------------------------------------------
 
-    run_test_go_stop(robot)
+    # run_test_go_stop(robot)
     # run_test_go_straight_for_seconds(robot)
     # run_test_go_straight_for_inches(robot)
-    # run_test_spin_in_place_for_seconds(robot)
+    run_test_spin_in_place_for_seconds(robot)
     # run_test_spin_in_place_for_degrees(robot)
     # run_test_turn_for_seconds(robot)
     # run_test_turn_for_degrees(robot)
@@ -72,6 +73,10 @@ def run_test_go_stop(robot):
         #   Then call the  stop  method of the   drive_system   of the robot.
         # -------------------------------------------------------------------------
 
+        # Solution to be removed
+        robot.drive_system.go(left_wheel_speed, right_wheel_speed)
+        time.sleep(3)
+        robot.drive_system.stop()
 
 
 def run_test_go_straight_for_seconds(robot):
@@ -97,6 +102,9 @@ def run_test_go_straight_for_seconds(robot):
         #  of the robot, sending it the input  seconds  and  speed.
         # -------------------------------------------------------------------------
 
+        # Solution to be removed
+        robot.drive_system.go_straight_for_seconds(seconds, speed)
+
 
 def run_test_go_straight_for_inches(robot):
     """
@@ -120,6 +128,9 @@ def run_test_go_straight_for_inches(robot):
         #  of the robot, sending it the input  inches  and  speed.
         #  (The go_straight_for_inches method uses the same speed for both wheels.)
         # -------------------------------------------------------------------------
+
+        # Solution to be removed
+        robot.drive_system.go_straight_for_inches(inches, speed)
 
 
 def run_test_spin_in_place_for_seconds(robot):
@@ -145,6 +156,9 @@ def run_test_spin_in_place_for_seconds(robot):
         #  (The go_straight_for_inches method uses the same speed for both wheels.)
         # -------------------------------------------------------------------------
 
+        # Solution to be removed
+        robot.drive_system.spin_in_place_for_seconds(seconds, speed)
+
 
 def run_test_spin_in_place_for_degrees(robot):
     """
@@ -165,6 +179,9 @@ def run_test_spin_in_place_for_degrees(robot):
         # TODO: 7. Call the  spin_in_place_for_degrees  method of the   drive_system
         #  of the robot, sending it the input  degrees  and  speed.
         # -------------------------------------------------------------------------
+
+        # Solution to be removed
+        robot.drive_system.spin_in_place_for_degrees(degrees, speed)
 
 
 def run_test_turn_for_seconds(robot):
@@ -187,6 +204,9 @@ def run_test_turn_for_seconds(robot):
         #  of the robot, sending it the input  degrees  and  seconds.
         # -------------------------------------------------------------------------
 
+        # Solution to be removed
+        robot.drive_system.turn_for_seconds(seconds, speed)
+
 
 def run_test_turn_for_degrees(robot):
     """
@@ -207,6 +227,9 @@ def run_test_turn_for_degrees(robot):
         # TODO: 9. Call the  turn_for_degrees  method of the   drive_system
         #  of the robot, sending it the input  degrees  and  speed.
         # -------------------------------------------------------------------------
+
+        # Solution to be removed
+        robot.drive_system.turn_for_degrees(degrees, speed)
 
 
 def run_test_draw_polygon(robot):
@@ -240,6 +263,10 @@ def run_test_draw_polygon(robot):
         #  sending the inputs degrees and speed or inches and speed as appropriate.
         # -------------------------------------------------------------------------
 
+        # Solution to be removed
+        for _ in range(sides):
+            robot.drive_system.go_straight_for_inches(inches, speed)
+            robot.drive_system.turn_for_degrees(degrees, speed)
 
 
 main()
