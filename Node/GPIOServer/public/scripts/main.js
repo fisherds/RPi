@@ -1,5 +1,5 @@
 var rhit = rhit || {};
-const apiUrl = "//localhost:3000/api";
+const apiUrl = "api";
 // const apiUrl = "//fisherds-pi400.wlan.rose-hulman.edu:3000/api/";
 
 // Reference:
