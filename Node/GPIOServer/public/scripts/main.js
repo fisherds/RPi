@@ -1,5 +1,5 @@
 var rhit = rhit || {};
-const apiUrl = "api";
+
 // Reference:
 //  GET /api/ledon
 //  GET /api/ledoff
@@ -38,28 +38,28 @@ rhit.LedController = class {
 
 		document.querySelector("#servoSlider").onchange = (event) => {
 			console.log("Servo slider = ", event.target.value);
-			fetch(`${apiUrl}/servo/${event.target.value}`);
+			fetch(`api/servo/${event.target.value}`);
 		}
 
 		document.querySelector("#motorSlider").onchange = (event) => {
 			console.log("Motor slider = ", event.target.value);
-			fetch(`${apiUrl}/motor/${event.target.value}`);
+			fetch(`api/motor/${event.target.value}`);
 		}
 
 		
 	}
 	handleLedOn(color) {
 		console.log("Turn the LED on");
-		fetch(`${apiUrl}/ledon/${color}`);
+		fetch(`api/ledon/${color}`);
 	}
 	handleLedOff(color) {
 		console.log("Turn the LED off");
-		fetch(`${apiUrl}/ledoff/${color}`);
+		fetch(`api/ledoff/${color}`);
 	}
 
 	async handleReadPushbuton() {
 		console.log("Read the pushbutton and update the label");
-		const response = await fetch(`${apiUrl}/readbutton`);
+		const response = await fetch(`api/readbutton`);
 		const data = await response.json();
 		console.log(data);
 		const output = "The pushbutton is " + (data["isHigh"] == 1 ? "HIGH" : "LOW");
