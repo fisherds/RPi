@@ -8,6 +8,8 @@ rhit.TankDriveController = class {
 	constructor() {
 		const buttons = document.querySelectorAll(".driveButton");
 		for (const button of buttons) {
+
+			// Good for a mobile device:
 			// button.onclick = (event) => {
 			// 	const leftMultiplier = parseFloat(button.dataset.leftMultiplier);
 			// 	const rightMultiplier = parseFloat(button.dataset.rightMultiplier);
