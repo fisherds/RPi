@@ -4,7 +4,8 @@
   "description": "Global Node package for things we'll install",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "sudo nodemon app.js"
   },
   "repository": {
     "type": "git",

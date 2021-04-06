@@ -1,20 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-// const rosebot = require("./rosebot");
+const rosebot = require("./rosebot");
 
 // Setup
 const app = express();
 app.use('/', express.static("public"));
 app.use('/api/', bodyParser.json());  // TODO: See if this is needed.
 
-// const robot = new rosebot.Rosebot()
+const robot = new rosebot.Rosebot()
 
 // Drive
 app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     let leftSpeed = parseInt(req.params.leftSpeed);
     let rightSpeed = parseInt(req.params.rightSpeed);
     console.log(`Motor go ${leftSpeed} ${rightSpeed}`);
-    // robot.driveSystem.go(leftSpeed, rightSpeed);
+    robot.driveSystem.go(leftSpeed, rightSpeed);
     res.json({
         "status": "ok",
         "rightSpeed": rightSpeed,
@@ -22,7 +22,7 @@ app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     });
 });
 app.get("/api/motor/stop", function (req, res) {
-    // robot.driveSystem.stop();
+    robot.driveSystem.stop();
     res.json({
         "status": "ok"
     });
@@ -32,7 +32,7 @@ app.get("/api/motor/stop", function (req, res) {
 app.post("/api/servo/arm_pw", function (req, res) {
     let pulseWidths = req.body.pulseWidths;
     console.log(pulseWidths);
-    // robot.armServos.setPulseWidths()
+    // robot.armServos.setPulseWidths(pulseWidths);
     res.json({
         "status": "ok",
         "pulseWidths": pulseWidths,

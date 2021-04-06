@@ -15,7 +15,7 @@ function main() {
   robot = new rosebot.RoseBot()
 
   while (true) {
-    console.log("Wheel speeds should be integers between -255 and 255.")
+    console.log("Wheel speeds should be integers between -100 and 100.")
     console.log("Enter values of 0 for both to exit.")
     let leftWheelSpeed = parseInt(prompt('Enter an integer for left wheel speed: '));
     let rightWheelSpeed = prompt('Enter an integer for right wheel speed: ');
