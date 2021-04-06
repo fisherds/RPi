@@ -7,7 +7,7 @@ const app = express();
 app.use('/', express.static("public"));
 app.use('/api/', bodyParser.json());  // TODO: See if this is needed.
 
-const robot = new rosebot.Rosebot()
+const robot = new rosebot.RoseBot()
 
 // Drive
 app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {

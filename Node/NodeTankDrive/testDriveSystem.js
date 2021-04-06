@@ -12,7 +12,7 @@ function main() {
   console.log('--------------------------------------------------')
   console.log('Testing the  DRIVE SYSTEM  of a robot')
   console.log('--------------------------------------------------')
-  robot = new rosebot.RoseBot()
+  const robot = new rosebot.RoseBot()
 
   while (true) {
     console.log("Wheel speeds should be integers between -100 and 100.")

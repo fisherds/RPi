@@ -10,7 +10,7 @@ class Motor {
     turnOn(speed) {
         // Assumes the provided speed is -100 to 100
         // Note: scales the range to be -255 to 255 in this method.
-        speed = speed * 25 / 10; // Convert the +/- 100 to +/- 255
+        speed = Math.round(speed * 25 / 10); // Convert the +/- 100 to +/- 255
         speed = (speed < -255) ? -255 : speed;
         speed = (speed > 255) ? 255 : speed;
         if (speed > 0) {
