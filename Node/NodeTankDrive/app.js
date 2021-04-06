@@ -1,20 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const rosebot = require("./rosebot");
+// const rosebot = require("./rosebot");
 
 // Setup
 const app = express();
 app.use('/', express.static("public"));
-app.use('/api/', bodyParser.json());
+app.use('/api/', bodyParser.json());  // TODO: See if this is needed.
 
-const robot = new rosebot.Rosebot()
+// const robot = new rosebot.Rosebot()
 
 // Drive
 app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     let leftSpeed = parseInt(req.params.leftSpeed);
     let rightSpeed = parseInt(req.params.rightSpeed);
     console.log(`Motor go ${leftSpeed} ${rightSpeed}`);
-    robot.driveSystem.rightMotor.go(leftSpeed, rightSpeed);
+    // robot.driveSystem.go(leftSpeed, rightSpeed);
     res.json({
         "status": "ok",
         "rightSpeed": rightSpeed,
@@ -22,7 +22,7 @@ app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
     });
 });
 app.get("/api/motor/stop", function (req, res) {
-    robot.driveSystem.rightMotor.stop();
+    // robot.driveSystem.stop();
     res.json({
         "status": "ok"
     });
@@ -30,30 +30,34 @@ app.get("/api/motor/stop", function (req, res) {
 
 // Servos
 app.post("/api/servo/arm", function (req, res) {
-    let angles = req.body.angles;
+    let pulseWidths = req.body.pulseWidths;
+    // robot.armServos.setPulseWidths()
     res.json({
         "status": "ok",
-        "stop": angles,
+        "pulseWidths": pulseWidths,
     });
 });
-app.get("/api/servo/gripper/:distanceInches", function (req, res) {
-    let distanceInches = parseFloat(req.params.distanceInches);
+app.get("/api/servo/gripper/:pulseWidth", function (req, res) {
+    let pulseWidth = parseFloat(req.params.pulseWidth);
+    // robot.gripperServo.pulseWidth = pulseWidth;
     res.json({
         "status": "ok",
-        "distanceinches": distanceInches,
+        "pulseWidth": distanceIpulseWidthnches,
     });
 });
-app.get("/api/servo/camera/:tiltAngle", function (req, res) {
-    let tiltAngle = parseInt(req.params.tiltAngle);
+app.get("/api/servo/camera/:pulseWidth", function (req, res) {
+    let pulseWidth = parseInt(req.params.pulseWidth);
+    // robot.cameraServo.pulseWidth = pulseWidth;
     res.json({
         "status": "ok",
-        "tiltAngle": tiltAngle,
+        "pulseWidth": pulseWidth,
     });
 });
 
 // Sensors
 app.get("/api/sensor/ultrasonic", function (req, res) {
     // TODO: Get the distance
+    // const distanceInches = robot.ultrasonicSensor.getValue();
     const distanceInches = 12;
     res.json({
         "status": "ok",
@@ -62,6 +66,7 @@ app.get("/api/sensor/ultrasonic", function (req, res) {
 });
 app.get("/api/sensor/reflective", function (req, res) {
     // TODO: Get the reflective sensor values
+    // const reflectiveValues = robot.irSensor.getValues();
     const reflectiveValues = 12;
     res.json({
         "status": "ok",
