@@ -39,7 +39,7 @@ app.post("/api/servo/arm", function (req, res) {
 });
 app.get("/api/servo/gripper/:pulseWidth", function (req, res) {
     let pulseWidth = parseFloat(req.params.pulseWidth);
-    // robot.gripperServo.pulseWidth = pulseWidth;
+    // robot.gripperServo.setPulseWidth(pulseWidth);
     res.json({
         "status": "ok",
         "pulseWidth": distanceIpulseWidthnches,
@@ -47,7 +47,7 @@ app.get("/api/servo/gripper/:pulseWidth", function (req, res) {
 });
 app.get("/api/servo/camera/:pulseWidth", function (req, res) {
     let pulseWidth = parseInt(req.params.pulseWidth);
-    // robot.cameraServo.pulseWidth = pulseWidth;
+    // robot.cameraServo.setPulseWidth(pulseWidth);
     res.json({
         "status": "ok",
         "pulseWidth": pulseWidth,
