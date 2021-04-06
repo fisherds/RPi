@@ -1,11 +1,13 @@
 var rhit = rhit || {};
-// const apiUrl = "//localhost:3000/api";
-// const apiUrl = "//fisherds-pi400.wlan.rose-hulman.edu:3000/api";
-const apiUrl = "//fisherds-tank.dhcp.rose-hulman.edu:3000/api";
 
 //Reference :
 // GET    /api/motor/go/:leftSpeed/:rightSpeed
 // GET    /api/motor/stop
+// POST   /api/servo/arm_pw      with body {"pulseWidths": [#,#,#]}
+// GET    /api/servo/gripper_pw/:pulseWidth
+// GET    /api/servo/camera_pw/:pulseWidth
+
+// Later:
 // POST   /api/servo/arm      with body {"angles": [#,#,#]}
 // GET    /api/servo/gripper/:distanceInches
 // GET    /api/servo/camera/:tiltAngle
@@ -27,7 +29,7 @@ rhit.TankDriveController = class {
 		const leftSpeed = Math.round(baseSpeed * leftMultiplier);
 		const rightSpeed = Math.round(baseSpeed * rightMultiplier);
 		console.log("Speeds:", leftSpeed, rightSpeed);
-		fetch(`${apiUrl}/motor/go/${leftSpeed}/${rightSpeed}`);
+		fetch(`api/motor/go/${leftSpeed}/${rightSpeed}`);
 	}
 }
 
