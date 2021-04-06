@@ -54,24 +54,4 @@ app.get("/api/servo/camera/:pulseWidth", function (req, res) {
     });
 });
 
-// Sensors
-app.get("/api/sensor/ultrasonic", function (req, res) {
-    // TODO: Get the distance
-    // const distanceInches = robot.ultrasonicSensor.getValue();
-    const distanceInches = 12;
-    res.json({
-        "status": "ok",
-        "distanceInches": distanceInches,
-    });
-});
-app.get("/api/sensor/reflective", function (req, res) {
-    // TODO: Get the reflective sensor values
-    // const reflectiveValues = robot.irSensor.getValues();
-    const reflectiveValues = 12;
-    res.json({
-        "status": "ok",
-        "reflectiveValues": reflectiveValues,
-    });
-});
-
 app.listen(3000);

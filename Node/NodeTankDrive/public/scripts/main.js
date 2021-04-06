@@ -9,8 +9,6 @@ const apiUrl = "//fisherds-tank.dhcp.rose-hulman.edu:3000/api";
 // POST   /api/servo/arm      with body {"angles": [#,#,#]}
 // GET    /api/servo/gripper/:distanceInches
 // GET    /api/servo/camera/:tiltAngle
-// GET    /api/sensor/ultrasonic
-// GET    /api/sensor/reflective
 
 rhit.TankDriveController = class {
 	constructor() {
