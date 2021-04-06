@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <title>Node Tank</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">Node Tank</a>
+  </nav>
+  <div id="mainPage" class="container page-container">
+    <div id="sliderContainer">
+      <input type="range" min="0" max="255" value="127" class="slider" id="baseSpeed">
+    </div>
+    
+
+    <div id="driveGrid">
+      <button type="button" data-left-multiplier="0.5" data-right-multiplier="1.0" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">undo</i>
+      </button>
+      <button type="button" data-left-multiplier="1.0" data-right-multiplier="1.0" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">arrow_upward</i>
+      </button>
+      <button type="button" data-left-multiplier="1.0" data-right-multiplier="0.5" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">redo</i>
+      </button>
+
+      <button type="button" data-left-multiplier="0.0" data-right-multiplier="1.0" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">arrow_back</i>
+      </button>
+      <button type="button" data-left-multiplier="0.0" data-right-multiplier="0.0" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">close</i>
+      </button>
+      <button type="button" data-left-multiplier="1.0" data-right-multiplier="0.0" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">arrow_forward</i>
+      </button>
+      <button type="button" data-left-multiplier="-0.5" data-right-multiplier="-1.0" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">subdirectory_arrow_left</i>
+      </button>
+      <button type="button" data-left-multiplier="-1.0" data-right-multiplier="-1.0" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">arrow_downward</i>
+      </button>
+      <button type="button" data-left-multiplier="-1.0" data-right-multiplier="-0.5" class="driveButton btn btn-block btn-outline-primary">
+        <i class="material-icons">subdirectory_arrow_right</i>
+      </button>
+    </div>
+    
+    <div id="spinButtons" class="row">
+      <div class="col">
+        <button type="button" data-left-multiplier="-1.0" data-right-multiplier="1.0" class="driveButton btn btn-outline-primary">
+          <i class="material-icons" style="transform: scaleX(-1);">refresh</i>
+        </button>
+      </div>
+      <div class="col">
+      
+      <button type="button" data-left-multiplier="0" data-right-multiplier="0" class="driveButton btn btn-outline-primary">
+        <i class="material-icons">close</i>
+      </button>
+      </div>
+      <div class="col">
+      <button type="button" data-left-multiplier="1.0" data-right-multiplier="-1.0" class="driveButton btn btn-outline-primary">
+        <i class="material-icons">refresh</i>
+      </button>
+      </div>
+    </div>
+  </div>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap-material-design.js"></script>
+  <script>
+    $("body").bootstrapMaterialDesign();
+  </script>
+  <script src="scripts/main.js"></script>
+</body>
+
+</html>

@@ -10,5 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "pca9685": "^5.0.0"
   }
 }

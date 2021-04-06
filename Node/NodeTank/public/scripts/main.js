@@ -3,6 +3,14 @@ var rhit = rhit || {};
 //Reference :
 // GET    /api/motor/go/:leftSpeed/:rightSpeed
 // GET    /api/motor/stop
+// POST   /api/servo/arm_pw      with body {"pulseWidths": [#,#,#]}
+// GET    /api/servo/gripper_pw/:pulseWidth
+// GET    /api/servo/camera_pw/:pulseWidth
+
+// Later:
+// POST   /api/servo/arm      with body {"angles": [#,#,#]}
+// GET    /api/servo/gripper/:distanceInches
+// GET    /api/servo/camera/:tiltAngle
 
 rhit.TankDriveController = class {
 	constructor() {
@@ -13,6 +21,7 @@ rhit.TankDriveController = class {
 			// 	const rightMultiplier = parseFloat(button.dataset.rightMultiplier);
 			// 	this.sendDriveCommand(leftMultiplier, rightMultiplier);
 			// }
+
 
 			button.onmousedown = (event) => {
 				const leftMultiplier = parseFloat(button.dataset.leftMultiplier);

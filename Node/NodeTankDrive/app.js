@@ -1,11 +1,9 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const rosebot = require("./rosebot");
 
 // Setup
 const app = express();
 app.use('/', express.static("public"));
-app.use('/api/', bodyParser.json());  // TODO: See if this is needed.
 
 const robot = new rosebot.RoseBot()
 
@@ -23,35 +21,9 @@ app.get("/api/motor/go/:leftSpeed/:rightSpeed", function (req, res) {
 });
 app.get("/api/motor/stop", function (req, res) {
     robot.driveSystem.stop();
+    console.log(`Motor stop`);
     res.json({
         "status": "ok"
-    });
-});
-
-// Servos
-app.post("/api/servo/arm_pw", function (req, res) {
-    let pulseWidths = req.body.pulseWidths;
-    console.log(pulseWidths);
-    // robot.armServos.setPulseWidths(pulseWidths);
-    res.json({
-        "status": "ok",
-        "pulseWidths": pulseWidths,
-    });
-});
-app.get("/api/servo/gripper_pw/:pulseWidth", function (req, res) {
-    let pulseWidth = parseInt(req.params.pulseWidth);
-    // robot.gripperServo.setPulseWidth(pulseWidth);
-    res.json({
-        "status": "ok",
-        "pulseWidth": pulseWidth,
-    });
-});
-app.get("/api/servo/camera_pw/:pulseWidth", function (req, res) {
-    let pulseWidth = parseInt(req.params.pulseWidth);
-    // robot.cameraServo.setPulseWidth(pulseWidth);
-    res.json({
-        "status": "ok",
-        "pulseWidth": pulseWidth,
     });
 });
 
