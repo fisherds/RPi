@@ -8,19 +8,26 @@ function sleep(n) {
   msleep(n*1000);
 }
 
-function main() {
+async function main() {
   console.log('--------------------------------------------------')
-  console.log('Testing the  DRIVE SYSTEM  of a robot')
+  console.log('Testing the  SERVO classes of a robot')
   console.log('--------------------------------------------------')
-  robot = new rosebot.RoseBot()
+  robot = new rosebot.RoseBot();
+  await robot.initializeServos();
 
   while (true) {
-    console.log("Wheel speeds should be integers between -255 and 255.")
-    console.log("Enter values of 0 for both to exit.")
-    let leftWheelSpeed = parseInt(prompt('Enter an integer for left wheel speed: '));
-    let rightWheelSpeed = prompt('Enter an integer for right wheel speed: ');
-    rightWheelSpeed = parseInt(rightWheelSpeed);
-    if (leftWheelSpeed == 0 && rightWheelSpeed == 0) {
+    console.log("Type in a servo number.  Options:")
+    console.log("11 --> Camera Tilt");
+    console.log("12 --> Arm Joint 1");
+    console.log("13 --> Arm Joint 2");
+    console.log("14 --> Arm Joint 3");
+    console.log("15 --> Gripper");
+    let servoNumber = parseInt(prompt("Servo number (11 to 15) or (0 to exit): "));
+    if (servoNumber == 0) {
+      break;
+    }
+    let pulseWidth = parseInt(prompt('Pulse width (500 to 2500): '));
+    if (pulseWidth == 0) {
       break;
     }
     prompt('Press the ENTER key when ready for the robot to start moving.');
@@ -31,9 +38,17 @@ function main() {
     // # -------------------------------------------------------------------------
 
     // Solution to be removed
-    robot.driveSystem.go(leftWheelSpeed, rightWheelSpeed);
-    sleep(3);
-    robot.driveSystem.stop();
+    if (servoNumber == 11) {
+      robot.cameraServo.setPulseWidth(pulseWidth);
+    } else if (servoNumber == 12) {
+      robot.armServos.setPulseWidth(1, pulseWidth);
+    } else if (servoNumber == 13) {
+      robot.armServos.setPulseWidth(2, pulseWidth);
+    } else if (servoNumber == 14) {
+      robot.armServos.setPulseWidth(3, pulseWidth);
+    } else if (servoNumber == 15) {
+      robot.gripperServo.setPulseWidth(pulseWidth);
+    }
   }
 }
 
