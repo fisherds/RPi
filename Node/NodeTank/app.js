@@ -29,14 +29,17 @@ app.get("/api/motor/stop", function (req, res) {
 });
 
 // Servos
-app.post("/api/servo/arm_pw", function (req, res) {
-    let pulseWidths = req.body.pulseWidths;
-    robot.armServos.setPulseWidths(pulseWidths);
+app.get("/api/servo/arm_pw/:jointNumber/:pulseWidth", function (req, res) {
+    let pulseWidth = parseInt(req.params.pulseWidth);
+    let jointNumber = parseInt(req.params.jointNumber);
+    robot.armServos.setPulseWidth(jointNumber, pulseWidth);
+    console.log(`Arm ${jointNumber}: ${pulseWidth}`);
     res.json({
         "status": "ok",
-        "pulseWidths": pulseWidths,
+        "pulseWidth": pulseWidth,
     });
 });
+
 app.get("/api/servo/gripper_pw/:pulseWidth", function (req, res) {
     let pulseWidth = parseInt(req.params.pulseWidth);
     robot.gripperServo.setPulseWidth(pulseWidth);
@@ -45,6 +48,7 @@ app.get("/api/servo/gripper_pw/:pulseWidth", function (req, res) {
         "pulseWidth": pulseWidth,
     });
 });
+
 app.get("/api/servo/camera_pw/:pulseWidth", function (req, res) {
     let pulseWidth = parseInt(req.params.pulseWidth);
     robot.cameraServo.setPulseWidth(pulseWidth);

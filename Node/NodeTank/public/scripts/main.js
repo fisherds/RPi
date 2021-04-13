@@ -39,6 +39,31 @@ rhit.TankDriveController = class {
 		document.onkeyup = (event) => {
 			this.handleKeypress(event);
 		}
+		document.querySelector("#servo11").onchange = (event) => {
+			console.log("Servo 11 slider = ", event.target.value);
+			document.querySelector("#servo11readout").innerHTML = event.target.value;
+			fetch(`api/servo/camera_pw/${event.target.value}`);
+		}
+		document.querySelector("#servo12").onchange = (event) => {
+			console.log("Servo 12 slider = ", event.target.value);
+			document.querySelector("#servo12readout").innerHTML = event.target.value;
+			fetch(`api/servo/arm_pw/1/${event.target.value}`);
+		}
+		document.querySelector("#servo13").onchange = (event) => {
+			console.log("Servo 13 slider = ", event.target.value);
+			document.querySelector("#servo13readout").innerHTML = event.target.value;
+			fetch(`api/servo/arm_pw/2/${event.target.value}`);
+		}
+		document.querySelector("#servo14").onchange = (event) => {
+			console.log("Servo 14 slider = ", event.target.value);
+			document.querySelector("#servo14readout").innerHTML = event.target.value;
+			fetch(`api/servo/arm_pw/3/${event.target.value}`);
+		}
+		document.querySelector("#servo15").onchange = (event) => {
+			console.log("Servo 15 slider = ", event.target.value);
+			document.querySelector("#servo15readout").innerHTML = event.target.value;
+			fetch(`api/servo/gripper_pw/${event.target.value}`);
+		}
 	}
 	sendDriveCommand(leftMultiplier, rightMultiplier) {
 		console.log("Multipliers:", leftMultiplier, rightMultiplier);
