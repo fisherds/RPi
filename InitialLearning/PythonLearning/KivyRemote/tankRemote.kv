@@ -1,20 +1,3 @@
-from kivymd.app import MDApp
-from kivy.lang import Builder
-
-
-class Test(MDApp):
-
-  
-    def send_drive_command(self, left_wheel_speed, right_wheel_speed):
-        print("Send drive command", left_wheel_speed, right_wheel_speed)
-
-    def stop(self):
-        print("Stop")
-
-    def build(self):
-        self.theme_cls.primary_palette = "BlueGray"
-        return Builder.load_string(
-            '''
 BoxLayout:
     orientation:'vertical'
 
@@ -27,7 +10,7 @@ BoxLayout:
         panel_color: .2, .2, .2, 1
 
         MDBottomNavigationItem:
-            name: 'screen 1'
+            name: 'Drive screen'
             text: 'Drive'
             icon: 'truck'
 
@@ -46,33 +29,38 @@ BoxLayout:
                     icon: "arrow-up"
                     text: "Forward"
                     on_press: app.send_drive_command(100, 100)
-                    on_release: app.stop()
+                    on_release: app.send_stop()
 
                 Widget:
 
 
                 MDFloatingActionButton:
                     icon: "arrow-left"
+                    on_press: app.send_drive_command(-100, 100)
+                    on_release: app.send_stop()
 
-                MDFloatingActionButton:
-                    icon: "stop"
-                    md_bg_color: app.theme_cls.primary_color
+                Widget:
+                # MDFloatingActionButton:
+                #     icon: "stop"
+                #     md_bg_color: app.theme_cls.primary_color
+                #     on_press: app.send_stop()
 
                 MDFloatingActionButton:
                     icon: "arrow-right"
+                    on_press: app.send_drive_command(100, -100)
+                    on_release: app.send_stop()
                 
                 Widget:
 
                 MDFloatingActionButton:
                     icon: "arrow-down"
+                    on_press: app.send_drive_command(-100, -100)
+                    on_release: app.send_stop()
 
                 Widget:
 
-
-
-
         MDBottomNavigationItem:
-            name: 'screen 2'
+            name: 'Servo screen'
             text: 'Servos'
             icon: 'wiper'
             BoxLayout:
@@ -123,8 +111,3 @@ BoxLayout:
                     min: 0
                     max: 2
                     value: 0.75
-'''
-        )
-
-
-Test().run()
