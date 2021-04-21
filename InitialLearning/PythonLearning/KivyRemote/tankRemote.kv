@@ -15,11 +15,9 @@ BoxLayout:
             icon: 'truck'
 
             MDGridLayout:
-                align: 'center'
                 adaptive_height: True
                 adaptive_width: True
                 cols: 3
-                padding: 20
                 spacing: 30
                 pos_hint: {'center_x':.5, 'center_y': .5}
 
@@ -75,6 +73,7 @@ BoxLayout:
                     min: 0
                     max: 60
                     value: 0
+                    on_value: app.send_camera_tilt(round(self.value))
 
                 MDLabel:
                     text: '12: Joint 1'
@@ -84,6 +83,7 @@ BoxLayout:
                     min: -90
                     max: 90
                     value: 0
+                    on_value: app.send_joint_angle(1, round(self.value))
 
                 MDLabel:
                     text: '13: Joint 2'
@@ -93,6 +93,7 @@ BoxLayout:
                     min: -90
                     max: 90
                     value: 0
+                    on_value: app.send_joint_angle(2, round(self.value))
 
                 MDLabel:
                     text: '14: Joint 3'
@@ -102,6 +103,7 @@ BoxLayout:
                     min: -90
                     max: 90
                     value: 0
+                    on_value: app.send_joint_angle(3, round(self.value))
 
                 MDLabel:
                     text: '15: Gripper'
@@ -111,3 +113,31 @@ BoxLayout:
                     min: 0
                     max: 2
                     value: 0.75
+                    on_touch_up: app.send_gripper_distance(round(self.value,2))
+                    # on_value: app.send_gripper_distance(round(self.value,2))
+
+        MDBottomNavigationItem:
+            name: 'Sensor screen'
+            text: 'Sensors'
+            icon: 'gauge'
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 30
+
+                MDLabel:
+                    text: 'Ultrasonic'
+                    halign: 'left'
+
+                MDLabel:
+                    id: ultrasonic_value_label
+                    text: '???'
+                    halign: 'center'
+
+                MDLabel:
+                    text: 'Line Sensor'
+                    halign: 'left'
+
+                MDLabel:
+                    id: line_sensor_value_label
+                    text: '???'
+                    halign: 'center'
