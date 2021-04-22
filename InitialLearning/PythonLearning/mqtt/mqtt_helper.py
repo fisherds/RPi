@@ -38,7 +38,7 @@ class MqttClient(object):
 
   def send_message(self, type_name, payload=None):
     message_dict = {"type": type_name}
-    if payload:
+    if payload is not None:
       message_dict["payload"] = payload
     message = json.dumps(message_dict)
     self.client.publish(self.publish_topic_name, message)
