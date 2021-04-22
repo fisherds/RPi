@@ -1,0 +1,31 @@
+MDBoxLayout:
+    orientation:'vertical'
+
+    MDToolbar:
+        title: 'Hello Button'
+
+    MDBoxLayout:
+        orientation:'horizontal'
+        adaptive_height: True
+        adaptive_width: True
+        padding: 20
+        spacing: 20
+        pos_hint: {'center_x': 0.5, 'top': 0}
+
+        MDRectangleFlatButton:
+            text: "Decrement"
+            on_press: app.change_counter(-1)
+
+        MDRectangleFlatButton:
+            text: "Reset"
+            on_press: app.set_counter(0)
+
+        MDRectangleFlatButton:
+            text: "Increment"
+            on_press: app.change_counter(1)
+
+    MDLabel:
+        text: app.label_text
+        halign: "center"
+
+    Widget
