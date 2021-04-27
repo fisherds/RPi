@@ -1,10 +1,12 @@
 var admin = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
-
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://fisherds-movie-quotes-571d2.firebaseio.com"
 });
+
+const rosebot = require("./rosebot");
+const robot = new rosebot.RoseBot()
 
 const db = admin.firestore();
 const ref = db.collection("Commands").doc("command");
@@ -25,11 +27,12 @@ ref.onSnapshot(docSnapshot => {
             const left_wheel_speed = payload[0];
             const right_wheel_speed = payload[1];
             console.log("Motor go @ ", left_wheel_speed, right_wheel_speed);
+            robot.driveSystem.go(left_wheel_speed, right_wheel_speed)
         } else if (message_type == "motor/stop") {
             console.log("Motor Stop");
+            robot.driveSystem.stop();
         }
     }
-
 }, err => {
     console.log(`Encountered error: ${err}`);
 });

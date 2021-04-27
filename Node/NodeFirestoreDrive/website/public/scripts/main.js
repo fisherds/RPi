@@ -1,12 +1,9 @@
 var rhit = rhit || {};
 
-rhit.FbCommandManager = class {
-	constructor() {
-	}
-}
-
 rhit.TankDriveController = class {
 	constructor() {
+		this.ref = firebase.firestore().collection("Commands").doc("command");
+
 		const buttons = document.querySelectorAll(".driveButton");
 		for (const button of buttons) {
 
@@ -42,10 +39,16 @@ rhit.TankDriveController = class {
 		console.log("Speeds:", leftSpeed, rightSpeed);
 		// fetch(`api/motor/go/${leftSpeed}/${rightSpeed}`);
 
-
+		this.ref.set({
+			"type": "motor/go",
+			"payload": `[${leftSpeed}, ${rightSpeed}]`
+		})
 	}
 	sendStop() {
 		// fetch(`api/motor/stop`);
+		this.ref.set({
+			"type": "motor/stop"
+		})
 	}
 
 	handleKeypress(event) {
