@@ -22,12 +22,10 @@ class HelloButtonApp(MDApp):
         self.mqtt_client = mqtt_helper.MqttClient()
         # self.mqtt_client.callback = lambda message_type, payload: self.mqtt_callback(message_type, payload)
         self.mqtt_client.callback = self.mqtt_callback
-        print("Connecting...")
         self.mqtt_client.connect(
             subscription_topic_name="fisherds",
         publish_topic_name="fisherds",
         mqtt_broker_ip_address="f2b.csse.rose-hulman.edu")
-        print("Finished connecting")
         self.counter = 0
         self.updateView()
     

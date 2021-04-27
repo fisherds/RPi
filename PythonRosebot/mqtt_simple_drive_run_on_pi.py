@@ -11,11 +11,11 @@ def mqtt_callback(type_name, payload, robot):
         left_wheel_speed = payload[0]
         right_wheel_speed = payload[1]
         print("Drive the motors at ", left_wheel_speed, right_wheel_speed)
-        # robot.drive_system.go(left_wheel_speed, right_wheel_speed)
+        robot.drive_system.go(left_wheel_speed, right_wheel_speed)
     
     if type_name == "motor/stop":
         print("Stop")
-        # robot.drive_system.stop()
+        robot.drive_system.stop()
     
 
 def main():

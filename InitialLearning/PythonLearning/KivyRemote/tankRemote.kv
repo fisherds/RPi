@@ -26,8 +26,10 @@ BoxLayout:
                 MDFloatingActionButton:
                     icon: "arrow-up"
                     text: "Forward"
-                    on_press: app.send_drive_command(100, 100)
-                    on_release: app.send_stop()
+                    # on_press: app.send_drive_command(100, 100)
+                    # on_release: app.send_stop()
+                    on_press: app.mqtt_client.send_message("motor/go",[100, 100])
+                    on_release: app.mqtt_client.send_message("motor/stop")
 
                 Widget:
 
