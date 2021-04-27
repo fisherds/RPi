@@ -9,7 +9,7 @@ admin.initializeApp({
 const db = admin.firestore();
 const ref = db.collection("MovieQuotes");
 
-const observer = ref.onSnapshot(querySnapshot => {
+ref.onSnapshot(querySnapshot => {
     console.log(`Received query snapshot of size ${querySnapshot.size}`);
     querySnapshot.docs.forEach((doc, index) => {
         console.log(doc.data());
