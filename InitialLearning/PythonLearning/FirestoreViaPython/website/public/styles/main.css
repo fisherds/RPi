@@ -1,0 +1,40 @@
+body {
+    background: #DDDDDD;
+}
+
+.navbar {
+    background-color: #800000;
+    color: white;
+}
+
+.page-container {
+    margin-top: 75px;
+}
+
+#fab {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 999;
+    background-color: #800000;
+    color: white;
+}
+
+#fab:active {
+    transform: translateY(2px);
+    opacity: 0.8;
+}
+
+.btn-outline-light {
+    color: #800000;
+}
+
+/* Something is wrong, just doing the quick fix. */
+.dropdown-menu-right {
+    left: -128px;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
