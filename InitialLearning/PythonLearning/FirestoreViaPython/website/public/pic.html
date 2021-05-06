@@ -7,13 +7,19 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link rel="stylesheet" href="styles/main.css">
-  <title>Photo Bucket</title>
+  <title>Door Monitor</title>
 </head>
-
 <body>
   <nav class="navbar navbar-dark fixed-top">
-    <a class="navbar-brand" href="/">Photo Bucket</a>
-
+    <a class="navbar-brand" href="/">Door Monitor</a>
+    <a href="/" class="btn bmd-btn-icon ml-auto">
+      <i class="material-icons">photo_library</i>
+    </a>
+    &nbsp;&nbsp;
+    <a href="/settings.html" class="btn bmd-btn-icon">
+      <i class="material-icons">settings</i>
+    </a>
+    &nbsp;&nbsp;
     <div class="dropdown pull-xs-right">
       <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="lr1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="material-icons">more_vert</i>
@@ -34,7 +40,6 @@
       </div>
     </div>
   </div>
-
 
   <!-- Modal -->
   <div class="modal fade" id="editCaptionDialog" tabindex="-1" role="dialog">

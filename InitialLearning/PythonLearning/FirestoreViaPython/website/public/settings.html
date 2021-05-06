@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" href="styles/pinterest.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <title>Door Monitor</title>
+</head>
+<body>
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">Door Monitor</a>
+    <a href="/" class="btn bmd-btn-icon ml-auto">
+      <i class="material-icons">photo_library</i>
+    </a>
+    &nbsp;&nbsp;
+    <a href="/settings.html" class="btn bmd-btn-icon">
+      <i class="material-icons">settings</i>
+    </a>
+  </nav>
+  <div id="settingsPage" class="text-center container page-container">
+    <hr>
+    <h3 class="settingsHeading">Manual mode:</h3>
+    <button type="button" class="btn btn-outline-primary">Take a Picture</button>
+    <hr>
+    <h3 class="settingsHeading">Sensor steam (for testing):</h3>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="radio" name="options" id="streamOn" autocomplete="off"> Stream On
+      </label>
+      <label class="btn btn-secondary active">
+        <input type="radio" name="options" id="streamOff" autocomplete="off" checked> Stream Off
+      </label>
+    </div>
+    <h3 class="text-center settingsHeading"></h3>
+    <hr>
+    <h3 class="settingsHeading">Settings:</h3>
+    <div class="row justify-content-center form-inline">
+      <div class="col-9 col-sm-7 form-group">
+        <label for="distanceThresholdCmInput" class="bmd-label-floating">Distance (cm)</label>
+        <input type="text" class="form-control" id="distanceThresholdCmInput">
+      </div>
+      <span class="col-3 col-sm-2 form-group bmd-form-group">
+        <!-- needed to match padding for floating labels -->
+        <button type="submitDistanceThreshold" class="btn btn-primary">Update</button>
+      </span>
+    </div>
+    <div class="row justify-content-center form-inline">
+      <div class="col-9 col-sm-7 form-group">
+        <label for="coolDownTimeSInput" class="bmd-label-floating">Time (s)</label>
+        <input type="text" class="form-control" id="coolDownTimeSInput">
+      </div>
+      <span class="col-3 col-sm-2 form-group bmd-form-group">
+        <!-- needed to match padding for floating labels -->
+        <button type="submitCoolDownTime" class="btn btn-primary">Update</button>
+      </span>
+    </div>
+    <hr>
+    <h3 class="settingsHeading">Arm the system:</h3>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="radio" name="options2" id="monitorOn" autocomplete="off"> Monitor On
+      </label>
+      <label class="btn btn-secondary active">
+        <input type="radio" name="options2" id="monitorOff" autocomplete="off" checked> Monitor Off
+      </label>
+    </div>
+    <hr>
+  </div>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap-material-design.js"></script>
+  <script>
+    $("body").bootstrapMaterialDesign();
+  </script>
+  <script src="/__/firebase/7.18.0/firebase-app.js"></script>
+  <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
+  <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <script src="scripts/main.js"></script>
+</body>
+
+</html>

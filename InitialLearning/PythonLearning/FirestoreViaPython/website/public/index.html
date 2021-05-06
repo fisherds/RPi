@@ -8,45 +8,22 @@
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link rel="stylesheet" href="styles/pinterest.css">
   <link rel="stylesheet" href="styles/main.css">
-  <title>Photo Bucket</title>
+  <title>Door Monitor</title>
 </head>
 
 <body>
   <nav class="navbar navbar-dark fixed-top">
-    <a class="navbar-brand" href="#">Photo Bucket</a>
+    <a class="navbar-brand" href="#">Door Monitor</a>
+    <a href="/" class="btn bmd-btn-icon ml-auto">
+      <i class="material-icons">photo_library</i>
+    </a>
+    &nbsp;&nbsp;
+    <a href="/settings.html" class="btn bmd-btn-icon">
+      <i class="material-icons">settings</i>
+    </a>
   </nav>
   <div id="listPage" class="container page-container">
     <div id="columns">
-    </div>
-  </div>
-
-  <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#addPicDialog">
-    <i class="material-icons">add</i>
-  </button>
-
-  <!-- Modal -->
-  <div class="modal fade" id="addPicDialog" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add a photo</h5>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="inputUrl" class="bmd-label-floating">Image url</label>
-            <input type="text" class="form-control" id="inputUrl">
-          </div>
-          <div class="form-group">
-            <label for="inputCaption" class="bmd-label-floating">Caption</label>
-            <input type="text" class="form-control" id="inputCaption">
-            <span class="bmd-help">Where did you find this image?</span>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
-          <button type="button" id="submitAddPic" class="btn btn-primary" data-dismiss="modal">CREATE</button>
-        </div>
-      </div>
     </div>
   </div>
   <script src="scripts/jquery.min.js"></script>
