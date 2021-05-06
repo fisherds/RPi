@@ -2,30 +2,35 @@ var rh = rh || {};
 
 /** globals */
 rh.COLLECTION_PICS = "Pictures";
-rh.KEY_URL = "url";
-rh.KEY_CAPTION = "caption";
-rh.KEY_LAST_TOUCHED = "lastTouched";
-rh.FbPicturesManager = null;
+rh.KEY_PIC_URL = "url";
+rh.KEY_PIC_CAPTION = "caption";
+rh.KEY_PIC_LAST_TOUCHED = "lastTouched";
 
 rh.COLLECTION_SETTINGS_PAGE = "SettingsPage";
-rh.DOC_ID_COMMAND = "command";
-rh.KEY_TYPE = "type";
-rh.KEY_PAYLOAD = "payload";  // Unused
-rh.DOC_ID_READING = "reading";
-rh.KEY_DISTANCE = "distance";
-rh.KEY_DISTANCE_TIMESTAMP = "timestamp";
-rh.DOC_ID_SETTINGS = "settings";
-rh.KEY_DISTANCE_CM = "distanceCm";
-rh.KEY_COOL_DOWN_TIME_S = "coolDownTimeS";
-rh.KEY_IS_STEAMING = "isStreaming";
-rh.KEY_IS_MONITORING = "isMonitoring";
+// Command document
+rh.DOC_COMMAND_ID = "command";
+rh.KEY_COMMAND_TYPE = "type";
+rh.KEY_COMMAND_PAYLOAD = "payload"; // Unused
+rh.KEY_COMMAND_TIMESTAMP = "timestamp";
+// Reading document
+rh.DOC_READING_ID = "reading";
+rh.KEY_READING_DISTANCE = "distance";
+rh.KEY_READING_TIMESTAMP = "timestamp";
+// Settings document
+rh.DOC_SETTINGS_ID = "settings";
+rh.KEY_SETTINGS_DISTANCE_CM = "distanceCm";
+rh.KEY_SETTINGS_COOL_DOWN_TIME_S = "coolDownTimeS";
+rh.KEY_SETTINGS_IS_STEAMING = "isStreaming";
+rh.KEY_SETTINGS_IS_MONITORING = "isMonitoring";
+
 rh.FbPicturesManager = null;
 rh.fbSettingsManager = null;
 
 // Settings Page
 rh.SettingsPageController = class {
 	constructor() {
-		rh.fbSettingsManager.beginListening(this.updateView.bind(this));
+		rh.fbSettingsManager.beginListeningForReadings(this.updateReading.bind(this));
+		rh.fbSettingsManager.beginListeningForSettings(this.updateSettings.bind(this));
 		$("#distanceThresholdCmInput").keypress(function (e) {
 			if (e.which == 13) {
 				const distanceThresholdCm = $("#distanceThresholdCmInput").val();
@@ -40,77 +45,80 @@ rh.SettingsPageController = class {
 				return false;
 			}
 		});
-		$("#submitEditCaption").click(() => {
-			const caption = $("#inputCaption").val();
-			rh.fbSinglePicManager.update(caption);
-		});
-		$("#submitDeletePic").click(() => {
-			rh.fbSinglePicManager.delete().then(() => {
-				window.location.href = "/"; // Go back to the list of pics.
-			});;
-		});
+
 	}
-	updateView() {
-		$("#image").attr("src", rh.fbSinglePicManager.url);
-		$("#image").attr("alt", rh.fbSinglePicManager.caption);
-		$("#image").attr("title", rh.fbSinglePicManager.caption);
-		$("#caption").html(rh.fbSinglePicManager.caption);
+	updateReading() {
+
+	}
+	updateSettings() {
+
 	}
 }
 
 rh.FbSettingsManager = class {
 	constructor() {
-		this._commandDocument = {};
-		
-		this._unsubscribe = null;
-		this._ref = firebase.firestore().collection(rh.COLLECTION_PICS);
+		this._readingDocument = {};
+		this._settingsDocument = {};
+		this._unsubscribeReadings = null;
+		this._unsubscribeSettings = null;
+		this._refCommand = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_COMMAND_ID);
+		this._refReading = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_READING_ID);
+		this._refSettings = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_SETTINGS_ID);
 	}
-	beginListening(changeListener) {
-		console.log("Listening for pics");
-		this._unsubscribe = this._ref.orderBy(rh.KEY_LAST_TOUCHED, "desc").limit(50).onSnapshot((querySnapshot) => {
-			this._documentSnapshots = querySnapshot.docs;
-			console.log(`Updated ${this._documentSnapshots.length} pics.`);
-
-			// Console log for the display for now.
-			querySnapshot.forEach(function (doc) {
-				console.log(doc.data());
-			});
-
-			if (changeListener) {
+	beginListeningForReadings(changeListener) {
+		console.log("Listening for readings");
+		this._refReading.onSnapshot(docSnapshot => {
+			if (docSnapshot.exists) {
+				this._readingDocument = docSnapshot;
 				changeListener();
 			}
+		}, err => {
+			console.log(`Encountered error getting reading: ${err}`);
 		});
 	}
-	stopListening() {
-		this._unsubscribe();
+	stopListeningForReadings() {
+		this._unsubscribeReadings();
+	}
+	beginListeningForSettings(changeListener) {
+		console.log("Listening for settings");
+		this._refSettings.onSnapshot(docSnapshot => {
+			if (docSnapshot.exists) {
+				this._settingsDocument = docSnapshot;
+				changeListener();
+			}
+		}, err => {
+			console.log(`Encountered error getting settings: ${err}`);
+		});
+	}
+	stopListeningForSettings() {
+		this._unsubscribeSettings();
 	}
 
-	add(url, caption) {
-		this._ref.add({
-				[rh.KEY_URL]: url,
-				[rh.KEY_CAPTION]: caption,
-				[rh.KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
-			})
-			.then(function (docRef) {
-				console.log("Document added with ID: ", docRef.id);
-			})
-			.catch(function (error) {
-				console.error("Error adding document: ", error);
-			});
+	sendTakePhoto() {
+		this._refCommand.set({
+			[rh.KEY_COMMAND_TYPE]: url,
+			[rh.KEY_COMMAND_TIMESTAMP]: firebase.firestore.Timestamp.now(),
+		});
 	}
-	update(id, url, caption) {}
-	delete(id) {}
-
-	get length() {
-		return this._documentSnapshots.length;
+	updateIsStreaming(isStreaming) {
+		this._refSettings.update({
+			[rh.KEY_SETTINGS_IS_STEAMING]: isStreaming
+		});
 	}
-
-	getPicAtIndex(index) {
-		return new rh.Pic(
-			this._documentSnapshots[index].id,
-			this._documentSnapshots[index].get(rh.KEY_URL),
-			this._documentSnapshots[index].get(rh.KEY_CAPTION)
-		);
+	updateDistanceThresholdCm(distanceThresholdCm) {
+		this._refSettings.update({
+			[rh.KEY_SETTINGS_DISTANCE_CM]: distanceThresholdCm
+		});
+	}
+	updateCoolDownTimeS(coolDownTimeS) {
+		this._refSettings.update({
+			[rh.KEY_SETTINGS_COOL_DOWN_TIME_S]: coolDownTimeS
+		});
+	}
+	updateIsMonitoring(isMonitoring) {
+		this._refSettings.update({
+			[rh.KEY_SETTINGS_IS_MONITORING]: isMonitoring
+		});
 	}
 }
 
@@ -131,7 +139,7 @@ rh.FbPicturesManager = class {
 	}
 	beginListening(changeListener) {
 		console.log("Listening for pics");
-		this._unsubscribe = this._ref.orderBy(rh.KEY_LAST_TOUCHED, "desc").limit(50).onSnapshot((querySnapshot) => {
+		this._unsubscribe = this._ref.orderBy(rh.KEY_PIC_LAST_TOUCHED, "desc").limit(50).onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
 			console.log(`Updated ${this._documentSnapshots.length} pics.`);
 
@@ -151,9 +159,9 @@ rh.FbPicturesManager = class {
 
 	add(url, caption) {
 		this._ref.add({
-				[rh.KEY_URL]: url,
-				[rh.KEY_CAPTION]: caption,
-				[rh.KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+				[rh.KEY_PIC_URL]: url,
+				[rh.KEY_PIC_CAPTION]: caption,
+				[rh.KEY_PIC_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 			})
 			.then(function (docRef) {
 				console.log("Document added with ID: ", docRef.id);
@@ -172,8 +180,8 @@ rh.FbPicturesManager = class {
 	getPicAtIndex(index) {
 		return new rh.Pic(
 			this._documentSnapshots[index].id,
-			this._documentSnapshots[index].get(rh.KEY_URL),
-			this._documentSnapshots[index].get(rh.KEY_CAPTION)
+			this._documentSnapshots[index].get(rh.KEY_PIC_URL),
+			this._documentSnapshots[index].get(rh.KEY_PIC_CAPTION)
 		);
 	}
 }
@@ -254,8 +262,8 @@ rh.FbSinglePicManager = class {
 
 	update(caption) {
 		this._ref.update({
-			[rh.KEY_CAPTION]: caption,
-			[rh.KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			[rh.KEY_PIC_CAPTION]: caption,
+			[rh.KEY_PIC_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
 		}).then(() => {
 			console.log("Document has been updated");
 		});
@@ -266,11 +274,11 @@ rh.FbSinglePicManager = class {
 	}
 
 	get caption() {
-		return this._document.get(rh.KEY_CAPTION);
+		return this._document.get(rh.KEY_PIC_CAPTION);
 	}
 
 	get url() {
-		return this._document.get(rh.KEY_URL);
+		return this._document.get(rh.KEY_PIC_URL);
 	}
 };
 
