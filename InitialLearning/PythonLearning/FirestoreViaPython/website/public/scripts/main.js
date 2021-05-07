@@ -23,35 +23,87 @@ rh.KEY_SETTINGS_COOL_DOWN_TIME_S = "coolDownTimeS";
 rh.KEY_SETTINGS_IS_STEAMING = "isStreaming";
 rh.KEY_SETTINGS_IS_MONITORING = "isMonitoring";
 
-rh.FbPicturesManager = null;
+rh.fbPicturesManager = null;
 rh.fbSettingsManager = null;
 
 // Settings Page
 rh.SettingsPageController = class {
 	constructor() {
+		// Capturing some elements for update view
+		this.streamingElements = [
+			document.querySelector("#streamOnButton"),
+			document.querySelector("#streamOnInput"),  // In latest version hidden
+			document.querySelector("#streamOffButton"),
+			document.querySelector("#streamOffInput"),  // In latest version hidden
+		];
+		this.monitoringElements = [
+			document.querySelector("#monitorOnButton"),
+			document.querySelector("#monitorOnInput"),  // In latest version hidden
+			document.querySelector("#monitorOffButton"),
+			document.querySelector("#monitorOffInput"),  // In latest version hidden
+		];
 		rh.fbSettingsManager.beginListeningForReadings(this.updateReading.bind(this));
 		rh.fbSettingsManager.beginListeningForSettings(this.updateSettings.bind(this));
+		$("#takePhotoButton").click(() => {
+			rh.fbSettingsManager.sendTakePhoto();
+		});
+		$("#streamOnButton").click(() => {
+			rh.fbSettingsManager.updateIsStreaming(true);
+		});
+		$("#streamOffButton").click(() => {
+			rh.fbSettingsManager.updateIsStreaming(false);
+		});
 		$("#distanceThresholdCmInput").keypress(function (e) {
 			if (e.which == 13) {
-				const distanceThresholdCm = $("#distanceThresholdCmInput").val();
-				rh.fbSettingsManager.updateDistanceThresholdCm(distanceThresholdCm);
+				this.sendSettingThresholds();
 				return false;
 			}
 		});
 		$("#coolDownTimeSInput").keypress(function (e) {
 			if (e.which == 13) {
-				const coolDownTimeS = $("#coolDownTimeSInput").val();
-				rh.fbSettingsManager.updateCoolDownTimeS(coolDownTimeS);
+				this.sendSettingThresholds();
 				return false;
 			}
 		});
-
+		$("#submitThresholds").click(() => {
+			this.sendSettingThresholds();
+		});
+		$("#monitorOnButton").click(() => {
+			rh.fbSettingsManager.updateIsMonitoring(true);
+		});
+		$("#monitorOffButton").click(() => {
+			rh.fbSettingsManager.updateIsMonitoring(false);
+		});
+	}
+	sendSettingThresholds() {
+		const distanceThresholdCm = $("#distanceThresholdCmInput").val();
+		const coolDownTimeS = $("#coolDownTimeSInput").val();
+		rh.fbSettingsManager.updateThresholdSettings(distanceThresholdCm, coolDownTimeS);
 	}
 	updateReading() {
-
+		const displayString = `${rh.fbSettingsManager.distanceReading} cm`;
+		document.querySelector("#distanceReadingDisplay").innerHTML = displayString;		
 	}
 	updateSettings() {
-
+		this.updateRadioElements(this.streamingElements, rh.fbSettingsManager.isStreaming)
+		$("#distanceThresholdCmInput").val(rh.fbSettingsManager.distanceThresholdCm);
+		$("#coolDownTimeSInput").val(rh.fbSettingsManager.coolDownTimeS);
+		this.updateRadioElements(this.monitoringElements, rh.fbSettingsManager.isMonitoring)
+	}
+	updateRadioElements(elements, isOn) {
+		elements.forEach((element, index) => {
+			if (index == 0 || index == 2) { // The buttons
+				// Button
+				if (index == 0 && isOn || index == 2 && !isOn) {
+					$(element).addClass("active");
+				} else {
+					$(element).removeClass("active");
+				}
+			} else {
+				// Inputs
+				$(element).prop('checked', index == 1 && isOn || index == 3 && !isOn);
+			}
+		});
 	}
 }
 
@@ -71,6 +123,8 @@ rh.FbSettingsManager = class {
 			if (docSnapshot.exists) {
 				this._readingDocument = docSnapshot;
 				changeListener();
+			} else {
+				console.log("There is no reading available");
 			}
 		}, err => {
 			console.log(`Encountered error getting reading: ${err}`);
@@ -85,6 +139,14 @@ rh.FbSettingsManager = class {
 			if (docSnapshot.exists) {
 				this._settingsDocument = docSnapshot;
 				changeListener();
+			} else {
+				this._refSettings.set({
+					[rh.KEY_SETTINGS_IS_STEAMING]: false,
+					[rh.KEY_SETTINGS_DISTANCE_CM]: 60,
+					[rh.KEY_SETTINGS_COOL_DOWN_TIME_S]: 3600,
+					[rh.KEY_SETTINGS_IS_MONITORING]: false,
+				});
+
 			}
 		}, err => {
 			console.log(`Encountered error getting settings: ${err}`);
@@ -93,12 +155,16 @@ rh.FbSettingsManager = class {
 	stopListeningForSettings() {
 		this._unsubscribeSettings();
 	}
-
 	sendTakePhoto() {
 		this._refCommand.set({
-			[rh.KEY_COMMAND_TYPE]: url,
+			[rh.KEY_COMMAND_TYPE]: "takePhoto",
 			[rh.KEY_COMMAND_TIMESTAMP]: firebase.firestore.Timestamp.now(),
 		});
+		setTimeout(() => {
+			this._refCommand.update({
+				[rh.KEY_COMMAND_TYPE]: ""
+			});
+		}, 2000);
 	}
 	updateIsStreaming(isStreaming) {
 		this._refSettings.update({
@@ -115,10 +181,32 @@ rh.FbSettingsManager = class {
 			[rh.KEY_SETTINGS_COOL_DOWN_TIME_S]: coolDownTimeS
 		});
 	}
+	updateThresholdSettings(distanceThresholdCm, coolDownTimeS) {
+		this._refSettings.update({
+			[rh.KEY_SETTINGS_DISTANCE_CM]: distanceThresholdCm,
+			[rh.KEY_SETTINGS_COOL_DOWN_TIME_S]: coolDownTimeS
+		});
+	}
 	updateIsMonitoring(isMonitoring) {
 		this._refSettings.update({
 			[rh.KEY_SETTINGS_IS_MONITORING]: isMonitoring
 		});
+	}
+	// Getters for each field
+	get distanceReading() {
+		return this._readingDocument.get(rh.KEY_READING_DISTANCE) || -1;
+	}
+	get isStreaming() {
+		return this._settingsDocument.get(rh.KEY_SETTINGS_IS_STEAMING);
+	}
+	get distanceThresholdCm() {
+		return this._settingsDocument.get(rh.KEY_SETTINGS_DISTANCE_CM) || -1;
+	}
+	get coolDownTimeS() {
+		return this._settingsDocument.get(rh.KEY_SETTINGS_COOL_DOWN_TIME_S) || -1
+	}
+	get isMonitoring() {
+		return this._settingsDocument.get(rh.KEY_SETTINGS_IS_MONITORING);
 	}
 }
 
@@ -188,7 +276,7 @@ rh.FbPicturesManager = class {
 
 rh.ListPageController = class {
 	constructor() {
-		rh.FbPicturesManager.beginListening(this.updateList.bind(this));
+		rh.fbPicturesManager.beginListening(this.updateList.bind(this));
 		$("#addPicDialog").on("show.bs.modal", function () {
 			$("#inputUrl").val("");
 			$("#inputCaption").val("");
@@ -199,13 +287,13 @@ rh.ListPageController = class {
 		$("#submitAddPic").click(() => {
 			const url = $("#inputUrl").val();
 			const caption = $("#inputCaption").val();
-			rh.FbPicturesManager.add(url, caption);
+			rh.fbPicturesManager.add(url, caption);
 		});
 		$("#inputCaption").keypress(function (e) {
 			if (e.which == 13) {
 				const url = $("#inputUrl").val();
 				const caption = $("#inputCaption").val();
-				rh.FbPicturesManager.add(url, caption);
+				rh.fbPicturesManager.add(url, caption);
 				$('#addPicDialog').modal('hide')
 				return false;
 			}
@@ -215,9 +303,9 @@ rh.ListPageController = class {
 		console.log("Update the  list on the page.", this);
 		$("#columns").removeAttr("id").hide();
 		let $newList = $("<div></div>").attr("id", "columns");
-		for (let k = 0; k < rh.FbPicturesManager.length; k++) {
+		for (let k = 0; k < rh.fbPicturesManager.length; k++) {
 			const $newCard = this.createCard(
-				rh.FbPicturesManager.getPicAtIndex(k)
+				rh.fbPicturesManager.getPicAtIndex(k)
 			);
 			$newList.append($newCard);
 		}
@@ -328,7 +416,7 @@ $(document).ready(() => {
 	}
 	if ($("#listPage").length) {
 		console.log("On the list page");
-		rh.FbPicturesManager = new rh.FbPicturesManager();
+		rh.fbPicturesManager = new rh.FbPicturesManager();
 		new rh.ListPageController();
 	}
 	if ($("#detailPage").length) {

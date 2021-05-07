@@ -39,7 +39,7 @@ body {
 }
 
 #settingsPage {
-    max-width: 400px;
+    max-width: 450px;
 }
 
 .settingsHeading {
@@ -59,4 +59,8 @@ body {
 
 input[type=checkbox], input[type=radio] {
     outline: none;
+}
+
+input[type=radio] {
+    display: none;
 }
