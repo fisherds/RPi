@@ -7,24 +7,18 @@ import threading
 import json
 import time
 
+
 class PiTank():
     def __init__(self):
         self.robot = rosebot.RoseBot()
-        self.setupFirebase()  # Adds the self.db and self.bucket
-        self.addCommandListener()
-
-    def setupFirebase(self):
         cred = credentials.Certificate('serviceAccountKey.json')
-        firebase_admin.initialize_app(cred, {
-            'storageBucket': 'fisherds-bucket.appspot.com'
-        })
-        self.bucket = storage.bucket()
+        firebase_admin.initialize_app(cred)
         self.db = firestore.client()
+        self.addCommandListener()
 
     def addCommandListener(self):
         # Create an Event for notifying main thread.
         self.callback_done = threading.Event()
-
         ref = self.db.collection(u"Commands").document(u"command")
         doc_watch = ref.on_snapshot(lambda docs, changes, read_time: self.on_command_snapshot(docs))
 
