@@ -22,7 +22,6 @@
     </a>
   </nav>
   <div id="settingsPage" class="text-center container page-container">
-    <hr>
     <h3 class="settingsHeading">Manual mode</h3>
     <button id="takePhotoButton" type="button" class="btn btn-outline-primary">Take a Picture</button>
     <hr>
@@ -39,7 +38,7 @@
     <hr>
     <h3 class="settingsHeading">Threshold settings</h3>
     <div class="row justify-content-center">
-      <div class="col-6 form-group">
+      <div id="distanceThresholdCmGroup" class="col-6 form-group">
         <label for="distanceThresholdCmInput" class="">Ultrasonic Distance (cm)</label>
         <input type="text" class="form-control" id="distanceThresholdCmInput">
       </div>
@@ -51,7 +50,8 @@
     <div class="row justify-content-center form-inline">
       <span class="form-group bmd-form-group">
         <!-- needed to match padding for floating labels -->
-        <button id="submitThresholds" class="btn btn-primary" type="button">Update Settings</button>
+        <button id="submitThresholds" class="btn btn-outline-primary" type="button">Update Settings</button>
+        
       </span>
     </div>
     <hr>
@@ -64,7 +64,6 @@
         <input type="radio" name="options2" id="monitorOffInput" autocomplete="off" checked> Monitor Off
       </label>
     </div>
-    <hr>
   </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>

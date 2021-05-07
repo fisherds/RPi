@@ -53,13 +53,13 @@ rh.SettingsPageController = class {
 		$("#streamOffButton").click(() => {
 			rh.fbSettingsManager.updateIsStreaming(false);
 		});
-		$("#distanceThresholdCmInput").keypress(function (e) {
+		$("#distanceThresholdCmInput").keypress((e) =>{
 			if (e.which == 13) {
 				this.sendSettingThresholds();
 				return false;
 			}
 		});
-		$("#coolDownTimeSInput").keypress(function (e) {
+		$("#coolDownTimeSInput").keypress((e) => {
 			if (e.which == 13) {
 				this.sendSettingThresholds();
 				return false;
@@ -226,40 +226,14 @@ rh.FbPicturesManager = class {
 		this._ref = firebase.firestore().collection(rh.COLLECTION_PICS);
 	}
 	beginListening(changeListener) {
-		console.log("Listening for pics");
 		this._unsubscribe = this._ref.orderBy(rh.KEY_PIC_LAST_TOUCHED, "desc").limit(50).onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
-			console.log(`Updated ${this._documentSnapshots.length} pics.`);
-
-			// Console log for the display for now.
-			querySnapshot.forEach(function (doc) {
-				console.log(doc.data());
-			});
-
-			if (changeListener) {
-				changeListener();
-			}
+			changeListener();
 		});
 	}
 	stopListening() {
 		this._unsubscribe();
 	}
-
-	add(url, caption) {
-		this._ref.add({
-				[rh.KEY_PIC_URL]: url,
-				[rh.KEY_PIC_CAPTION]: caption,
-				[rh.KEY_PIC_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
-			})
-			.then(function (docRef) {
-				console.log("Document added with ID: ", docRef.id);
-			})
-			.catch(function (error) {
-				console.error("Error adding document: ", error);
-			});
-	}
-	update(id, url, caption) {}
-	delete(id) {}
 
 	get length() {
 		return this._documentSnapshots.length;
