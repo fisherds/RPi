@@ -38,14 +38,11 @@ body {
     cursor: pointer;
 }
 
-#settingsPage {
-    max-width: 450px;
-}
-
 .settingsHeading {
-    text-align: left;
-    font-size: 1.25em;
-    
+    color: #bbb;
+    font-size: 2.0em;
+    position: relative;
+    top: 6px;
 }
 
 .btn-secondary.active.custom-file-control:focus:before, .btn-secondary.active.custom-file-control:hover:before, .btn-secondary.active.focus.custom-file-control:before, .btn-secondary.custom-file-control:active.focus:before, .btn-secondary.custom-file-control:active:focus:before, .btn-secondary.custom-file-control:active:hover:before, .btn.btn-secondary.active.focus, .btn.btn-secondary.active:focus, .btn.btn-secondary.active:hover, .btn.btn-secondary:active.focus, .btn.btn-secondary:active:focus, .btn.btn-secondary:active:hover, .open>.btn-secondary.dropdown-toggle.custom-file-control:focus:before, .open>.btn-secondary.dropdown-toggle.custom-file-control:hover:before, .open>.btn-secondary.dropdown-toggle.focus.custom-file-control:before, .open>.btn.btn-secondary.dropdown-toggle.focus, .open>.btn.btn-secondary.dropdown-toggle:focus, .open>.btn.btn-secondary.dropdown-toggle:hover {
@@ -74,11 +71,3 @@ hr {
     background-color: #80704e;
 }
 
-#distanceThresholdCmGroup {
-    position: relative;
-    left: 18px;
-}
-
-input[type="text"] {
-    text-align: center;
-}

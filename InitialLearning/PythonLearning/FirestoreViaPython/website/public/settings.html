@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="styles/main.css">
   <title>Door Monitor</title>
 </head>
+
 <body>
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">Door Monitor</a>
@@ -22,60 +23,110 @@
     </a>
   </nav>
   <div id="settingsPage" class="text-center container page-container">
-    <h3 class="settingsHeading">Manual mode</h3>
-    <button id="takePhotoButton" type="button" class="btn btn-outline-primary">Take a Picture</button>
-    <hr>
-    <h3 class="settingsHeading">Sensor steam (for testing)</h3>
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-      <label id="streamOnButton" class="btn btn-secondary">
-        <input type="radio" name="options" id="streamOnInput" autocomplete="off"> Stream On
-      </label>
-      <label id="streamOffButton" class="btn btn-secondary active">
-        <input type="radio" name="options" id="streamOffInput" autocomplete="off" checked> Stream Off
-      </label>
-    </div>
-    <h3 id="distanceReadingDisplay" class="text-center settingsHeading"></h3>
-    <hr>
-    <h3 class="settingsHeading">Threshold settings</h3>
-    <div class="row justify-content-center">
-      <div id="distanceThresholdCmGroup" class="col-6 form-group">
-        <label for="distanceThresholdCmInput" class="">Ultrasonic Distance (cm)</label>
-        <input type="text" class="form-control" id="distanceThresholdCmInput">
+    <div class="card">
+      <div class="card-header">
+        <div class="row justify-content-center">
+          <div class="col-11 col-sm-5">
+            <div class="settingsHeading">MANUAL PHOTO</div>
+          </div>
+          <div class="col-11 col-sm-6">
+            <button style="visibility: hidden;" id="takePhotoButton" type="button" class="btn btn-outline-primary">Take
+              a Picture</button>
+            <button id="takePhotoButton" type="button" class="btn btn-outline-primary">Take a Picture</button>
+          </div>
+        </div>
       </div>
-      <div class="col-6 form-group">
-        <label for="coolDownTimeSInput" class="">Cool Down Time (s)</label>
-        <input type="text" class="form-control" id="coolDownTimeSInput">
+      <div class="card-body">
+        <p class="card-text">Make the Pi take a picture right now and upload it to Firebase. Latest image:</p>
+        <img id="lastestPhoto" src="images/no_photo_available.png" alt="Latest Photo">
       </div>
     </div>
-    <div class="row justify-content-center form-inline">
-      <span class="form-group bmd-form-group">
-        <!-- needed to match padding for floating labels -->
-        <button id="submitThresholds" class="btn btn-outline-primary" type="button">Update Settings</button>
-        
-      </span>
+    <br>
+    <div class="card">
+      <div class="card-header">
+        <div class="row justify-content-center">
+          <div class="col-11 col-sm-5">
+            <div class="settingsHeading">FEEDBACK STREAM</div>
+          </div>
+          <div class="col-11 col-sm-6">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label id="streamOnButton" class="btn btn-secondary">
+                <input type="radio" name="options" id="streamOnInput" autocomplete="off"> Stream On
+              </label>
+              <label id="streamOffButton" class="btn btn-secondary active">
+                <input type="radio" name="options" id="streamOffInput" autocomplete="off" checked> Stream Off
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-text">When you make a robot, it's hard to know what is going on. The Feedback Stream is designed
+          to help debug what is happening on your robot. When the stream is active the most recent Ultrasonic distance
+          reading will be displayed below. Additionally, the time since the last photo was taken is displayed below.
+          These are the two factors that determine when the security system will automatically take a photo.</p>
+        <h5 class="card-title">Current Distance =
+          <span id="distanceReadingDisplay">37 cm</span>
+        </h5>
+        <h5 class="card-title">Time since last photo =
+          <span id="distanceReadingDisplay">317 seconds</span>
+        </h5>
+      </div>
     </div>
-    <hr>
-    <h3 class="settingsHeading">Arm the system</h3>
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-      <label id="monitorOnButton" class="btn btn-secondary">
-        <input type="radio" name="options2" id="monitorOnInput" autocomplete="off"> Monitor On
-      </label>
-      <label id="monitorOffButton" class="btn btn-secondary active">
-        <input type="radio" name="options2" id="monitorOffInput" autocomplete="off" checked> Monitor Off
-      </label>
+    <br>
+    <div class="card">
+      <div class="card-header">
+        <div class="row justify-content-center">
+          <div class="col-11 col-sm-5">
+            <div class="settingsHeading">SECURITY SYSTEM</div>
+          </div>
+          <div class="col-11 col-sm-6">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label id="monitorOnButton" class="btn btn-secondary">
+                <input type="radio" name="options2" id="monitorOnInput" autocomplete="off"> Monitor On
+              </label>
+              <label id="monitorOffButton" class="btn btn-secondary active">
+                <input type="radio" name="options2" id="monitorOffInput" autocomplete="off" checked> Monitor Off
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-text">When you are ready, arm the security system. Two things need to happen to take a
+          picture. #1. The current ultrasonic distance reading must be less than the set distance threshold (see input
+          below).
+          #2. To avoid lots of accidental photos, a certain amount of time must pass since the last photo was taken.
+          This is know as the <b>cool down time</b>. The cool down time is set below.
+          When the Tank Pi meets those criteria, it will automatically take a photo and upload it to Firebase.
+        </p>
+        <div class="row justify-content-center">
+          <div class="col-11 col-sm-6 col-md-4 form-group">
+            <label for="distanceThresholdCmInput" class="">Ultrasonic Distance Threshold (cm)</label>
+            <input type="text" class="form-control" id="distanceThresholdCmInput">
+          </div>
+          <div class="col-11 col-sm-6 col-md-4 form-group">
+            <label for="coolDownTimeSInput" class="">Cool Down Time Threshold (seconds)</label>
+            <input type="text" class="form-control" id="coolDownTimeSInput">
+          </div>
+          <span class="col-11 col-md-3 form-group bmd-form-group">
+            <!-- needed to match padding for floating labels -->
+            <button id="submitThresholds" class="btn btn-outline-primary" type="button">Update Settings</button>
+          </span>
+        </div>
+      </div>
     </div>
-  </div>
-  <script src="scripts/jquery.min.js"></script>
-  <script src="scripts/popper.js"></script>
-  <script src="scripts/bootstrap-material-design.js"></script>
-  <script>
-    $("body").bootstrapMaterialDesign();
-  </script>
-  <script src="/__/firebase/7.18.0/firebase-app.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
-  <script src="/__/firebase/init.js"></script>
-  <script src="scripts/main.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/popper.js"></script>
+    <script src="scripts/bootstrap-material-design.js"></script>
+    <script>
+      $("body").bootstrapMaterialDesign();
+    </script>
+    <script src="/__/firebase/7.18.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
+    <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/init.js"></script>
+    <script src="scripts/main.js"></script>
 </body>
 
 </html>
