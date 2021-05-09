@@ -27,18 +27,18 @@
       <div class="card-header">
         <div class="row justify-content-center">
           <div class="col-11 col-sm-5">
-            <div class="settingsHeading">MANUAL PHOTO</div>
+            <div class="settingsHeading">MANUAL COMMAND</div>
           </div>
           <div class="col-11 col-sm-6">
-            <button style="visibility: hidden;" id="takePhotoButton" type="button" class="btn btn-outline-primary">Take
-              a Picture</button>
+            <button style="visibility: hidden;" type="button" class="btn btn-outline-primary">Take a Picture</button>
             <button id="takePhotoButton" type="button" class="btn btn-outline-primary">Take a Picture</button>
           </div>
         </div>
       </div>
       <div class="card-body">
         <p class="card-text">Make the Pi take a picture right now and upload it to Firebase. Latest image:</p>
-        <img id="lastestPhoto" src="images/no_photo_available.png" alt="Latest Photo">
+        <img id="latestPhoto" class="img-fluid" src="images/no_photo_available.png" alt="Latest Photo">
+        <div id="latestPhotoCaption"></div>
       </div>
     </div>
     <br>
@@ -66,10 +66,10 @@
           reading will be displayed below. Additionally, the time since the last photo was taken is displayed below.
           These are the two factors that determine when the security system will automatically take a photo.</p>
         <h5 class="card-title">Current Distance =
-          <span id="distanceReadingDisplay">37 cm</span>
+          <span id="feedbackStreamCurrentDistance">37 cm</span>
         </h5>
         <h5 class="card-title">Time since last photo =
-          <span id="distanceReadingDisplay">317 seconds</span>
+          <span id="feedbackStreamCurrentTime">317 seconds</span>
         </h5>
       </div>
     </div>

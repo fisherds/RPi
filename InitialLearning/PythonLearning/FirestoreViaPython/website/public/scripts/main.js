@@ -1,30 +1,30 @@
 var rh = rh || {};
 
 /** globals */
-rh.COLLECTION_PICS = "Pictures";
-rh.KEY_PIC_URL = "url";
-rh.KEY_PIC_CAPTION = "caption";
-rh.KEY_PIC_LAST_TOUCHED = "lastTouched";
-
+rh.COLLECTION_PHOTOS = "Photos";
+rh.KEY_PHOTO_CAPTION = "caption";
+rh.KEY_PHOTO_CREATED = "created";
+rh.KEY_PHOTO_URL = "url";
 rh.COLLECTION_SETTINGS_PAGE = "SettingsPage";
-// Command document
-rh.DOC_COMMAND_ID = "command";
-rh.KEY_COMMAND_TYPE = "type";
-rh.KEY_COMMAND_PAYLOAD = "payload"; // Unused
-rh.KEY_COMMAND_TIMESTAMP = "timestamp";
-// Reading document
-rh.DOC_READING_ID = "reading";
-rh.KEY_READING_DISTANCE = "distance";
-rh.KEY_READING_TIMESTAMP = "timestamp";
-// Settings document
-rh.DOC_SETTINGS_ID = "settings";
-rh.KEY_SETTINGS_DISTANCE_CM = "distanceCm";
-rh.KEY_SETTINGS_COOL_DOWN_TIME_S = "coolDownTimeS";
-rh.KEY_SETTINGS_IS_STEAMING = "isStreaming";
-rh.KEY_SETTINGS_IS_MONITORING = "isMonitoring";
+// Manual Command document
+rh.DOC_ID_MANUAL_COMMAND = "manualCommand";
+rh.KEY_MANUAL_COMMAND_TYPE = "type";
+rh.VALUE_MANUAL_COMMAND_TAKE_PHOTO_TYPE = "takePhoto";
+rh.KEY_MANUAL_COMMAND_PAYLOAD = "payload"; // Unused
+rh.KEY_MANUAL_COMMAND_TIMESTAMP = "timestamp";
+// Feedback Stream document
+rh.DOC_ID_FEEDBACK_STREAM = "feedbackStream";
+rh.KEY_FEEDBACK_STREAM_IS_ACTIVE = "isActive";
+rh.KEY_FEEDBACK_STREAM_CURRENT_DISTANCE = "currentDistance";
+rh.KEY_FEEDBACK_STREAM_TIME_SINCE_LAST_SECURITY_PHOTO = "currentTime";
+// Security System document
+rh.DOC_ID_SECURITY_SYSTEM = "securitySystem";
+rh.KEY_SECURITY_SYSTEM_IS_ACTIVE = "isActive";
+rh.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD = "distanceThreshold";
+rh.KEY_SECURITY_SYSTEM_COOL_DOWN_TIME_THRESHOLD = "timeThreshold";
 
-rh.fbPicturesManager = null;
-rh.fbSettingsManager = null;
+rh.fbPhotosCollectionManager = null;
+rh.fbSettingsPageDocumentManager = null;
 
 // Settings Page
 rh.SettingsPageController = class {
@@ -32,26 +32,28 @@ rh.SettingsPageController = class {
 		// Capturing some elements for update view
 		this.streamingElements = [
 			document.querySelector("#streamOnButton"),
-			document.querySelector("#streamOnInput"),  // In latest version hidden
+			document.querySelector("#streamOnInput"),  // Not visible but still set.
 			document.querySelector("#streamOffButton"),
-			document.querySelector("#streamOffInput"),  // In latest version hidden
+			document.querySelector("#streamOffInput"),  // Not visible but still set.
 		];
 		this.monitoringElements = [
 			document.querySelector("#monitorOnButton"),
-			document.querySelector("#monitorOnInput"),  // In latest version hidden
+			document.querySelector("#monitorOnInput"),  // Not visible but still set.
 			document.querySelector("#monitorOffButton"),
-			document.querySelector("#monitorOffInput"),  // In latest version hidden
+			document.querySelector("#monitorOffInput"),  // Not visible but still set.
 		];
-		rh.fbSettingsManager.beginListeningForReadings(this.updateReading.bind(this));
-		rh.fbSettingsManager.beginListeningForSettings(this.updateSettings.bind(this));
+
+		rh.fbSettingsPageDocumentManager.beginListeningForFeedbackStreamDocument(this.updateFeedbackStream.bind(this));
+		rh.fbSettingsPageDocumentManager.beginListeningForSecuritySystemDocument(this.updateSecuritySystemValues.bind(this));
+		rh.fbPhotosCollectionManager.beginListeningForLatestPhoto(this.updateLatestPhoto.bind(this));
 		$("#takePhotoButton").click(() => {
-			rh.fbSettingsManager.sendTakePhoto();
+			rh.fbSettingsPageDocumentManager.sendManualCommandToTakeAPhoto();
 		});
 		$("#streamOnButton").click(() => {
-			rh.fbSettingsManager.updateIsStreaming(true);
+			rh.fbSettingsPageDocumentManager.updateFeedbackStreamIsActive(true);
 		});
 		$("#streamOffButton").click(() => {
-			rh.fbSettingsManager.updateIsStreaming(false);
+			rh.fbSettingsPageDocumentManager.updateFeedbackStreamIsActive(false);
 		});
 		$("#distanceThresholdCmInput").keypress((e) =>{
 			if (e.which == 13) {
@@ -69,149 +71,158 @@ rh.SettingsPageController = class {
 			this.sendSettingThresholds();
 		});
 		$("#monitorOnButton").click(() => {
-			rh.fbSettingsManager.updateIsMonitoring(true);
+			rh.fbSettingsPageDocumentManager.updateSecuritySystemIsActive(true);
 		});
 		$("#monitorOffButton").click(() => {
-			rh.fbSettingsManager.updateIsMonitoring(false);
+			rh.fbSettingsPageDocumentManager.updateSecuritySystemIsActive(false);
 		});
 	}
 	sendSettingThresholds() {
 		const distanceThresholdCm = $("#distanceThresholdCmInput").val();
 		const coolDownTimeS = $("#coolDownTimeSInput").val();
-		rh.fbSettingsManager.updateThresholdSettings(distanceThresholdCm, coolDownTimeS);
+		rh.fbSettingsPageDocumentManager.updateThresholdSettings(distanceThresholdCm, coolDownTimeS);
 	}
-	updateReading() {
-		const displayString = `${rh.fbSettingsManager.distanceReading} cm`;
-		document.querySelector("#distanceReadingDisplay").innerHTML = displayString;		
+	updateLatestPhoto() {
+		const url = rh.fbPhotosCollectionManager.latestUrl;
+		const caption = rh.fbPhotosCollectionManager.latestCaption;
+
+		const lastestPhoto = document.querySelector("#latestPhoto");
+		latestPhoto.src = url;
+		latestPhoto.alt = caption;
+
+		document.querySelector("#latestPhotoCaption").innerHTML = caption;
+		
+
 	}
-	updateSettings() {
-		this.updateRadioElements(this.streamingElements, rh.fbSettingsManager.isStreaming)
-		$("#distanceThresholdCmInput").val(rh.fbSettingsManager.distanceThresholdCm);
-		$("#coolDownTimeSInput").val(rh.fbSettingsManager.coolDownTimeS);
-		this.updateRadioElements(this.monitoringElements, rh.fbSettingsManager.isMonitoring)
+	updateFeedbackStream() {
+		this.updateRadioElements(this.streamingElements, rh.fbSettingsPageDocumentManager.isFeedbackStreamActive)
+		const distanceString = `${rh.fbSettingsPageDocumentManager.streamCurrentDistance} cm`;
+		document.querySelector("#feedbackStreamCurrentDistance").innerHTML = distanceString;
+		const timeString = `${rh.fbSettingsPageDocumentManager.streamCurrentTime} seconds`;
+		document.querySelector("#feedbackStreamCurrentTime").innerHTML = timeString;
+	}
+	updateSecuritySystemValues() {
+		this.updateRadioElements(this.monitoringElements, rh.fbSettingsPageDocumentManager.isSecuritySystemActive)
+		$("#distanceThresholdCmInput").val(rh.fbSettingsPageDocumentManager.distanceThreshold);
+		$("#coolDownTimeSInput").val(rh.fbSettingsPageDocumentManager.timeThreshold);
 	}
 	updateRadioElements(elements, isOn) {
+		// Element order: onButton, onInput, offButton, offInput
 		elements.forEach((element, index) => {
 			if (index == 0 || index == 2) { // The buttons
-				// Button
+				// Buttons: 0 is the on button, 2 is the off button
 				if (index == 0 && isOn || index == 2 && !isOn) {
 					$(element).addClass("active");
 				} else {
 					$(element).removeClass("active");
 				}
 			} else {
-				// Inputs
+				// Inputs: 1 is the on input, 3 is the off input
 				$(element).prop('checked', index == 1 && isOn || index == 3 && !isOn);
 			}
 		});
 	}
 }
 
-rh.FbSettingsManager = class {
+rh.FbSettingsPageDocumentManager = class {
 	constructor() {
-		this._readingDocument = {};
-		this._settingsDocument = {};
-		this._unsubscribeReadings = null;
-		this._unsubscribeSettings = null;
-		this._refCommand = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_COMMAND_ID);
-		this._refReading = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_READING_ID);
-		this._refSettings = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_SETTINGS_ID);
+		this._feedbackStreamDocument = {};
+		this._securitySystemDocument = {};
+		this._unsubscribeFeedbackStream = null;
+		this._unsubscribeSecuritySystem = null;
+		this._refManualCommandDoc = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_ID_MANUAL_COMMAND);
+		this._refFeedbackStreamDoc = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_ID_FEEDBACK_STREAM);
+		this._refSecuritySystemDoc = firebase.firestore().collection(rh.COLLECTION_SETTINGS_PAGE).doc(rh.DOC_ID_SECURITY_SYSTEM);
 	}
-	beginListeningForReadings(changeListener) {
-		console.log("Listening for readings");
-		this._refReading.onSnapshot(docSnapshot => {
+	beginListeningForFeedbackStreamDocument(changeListener) {
+		this._refFeedbackStreamDoc.onSnapshot(docSnapshot => {
 			if (docSnapshot.exists) {
-				this._readingDocument = docSnapshot;
+				this._feedbackStreamDocument = docSnapshot;
 				changeListener();
 			} else {
-				console.log("There is no reading available");
+				console.log("There is no feedback stream data available");
+				this._refFeedbackStreamDoc.set({
+					[rh.KEY_FEEDBACK_STREAM_IS_ACTIVE]: false,
+				});
 			}
 		}, err => {
 			console.log(`Encountered error getting reading: ${err}`);
 		});
 	}
-	stopListeningForReadings() {
-		this._unsubscribeReadings();
+	stopListeningForFeedbackStreamDocument() {
+		this._unsubscribeFeedbackStream();
 	}
-	beginListeningForSettings(changeListener) {
-		console.log("Listening for settings");
-		this._refSettings.onSnapshot(docSnapshot => {
+	beginListeningForSecuritySystemDocument(changeListener) {
+		this._refSecuritySystemDoc.onSnapshot(docSnapshot => {
 			if (docSnapshot.exists) {
-				this._settingsDocument = docSnapshot;
+				this._securitySystemDocument = docSnapshot;
 				changeListener();
 			} else {
-				this._refSettings.set({
-					[rh.KEY_SETTINGS_IS_STEAMING]: false,
-					[rh.KEY_SETTINGS_DISTANCE_CM]: 60,
-					[rh.KEY_SETTINGS_COOL_DOWN_TIME_S]: 3600,
-					[rh.KEY_SETTINGS_IS_MONITORING]: false,
+				this._refSecuritySystemDoc.set({
+					[rh.KEY_FEEDBACK_STREAM_IS_ACTIVE]: false,
+					[rh.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD]: 60,
+					[rh.KEY_SECURITY_SYSTEM_COOL_DOWN_TIME_THRESHOLD]: 3600,
 				});
-
 			}
 		}, err => {
 			console.log(`Encountered error getting settings: ${err}`);
 		});
 	}
-	stopListeningForSettings() {
-		this._unsubscribeSettings();
+	stopListeningForSecuritySystemDocument() {
+		this._unsubscribeSecuritySystem();
 	}
-	sendTakePhoto() {
-		this._refCommand.set({
-			[rh.KEY_COMMAND_TYPE]: "takePhoto",
-			[rh.KEY_COMMAND_TIMESTAMP]: firebase.firestore.Timestamp.now(),
+
+	sendManualCommandToTakeAPhoto() {
+		this._refManualCommandDoc.set({
+			[rh.KEY_MANUAL_COMMAND_TYPE]: rh.VALUE_MANUAL_COMMAND_TAKE_PHOTO_TYPE,
+			[rh.KEY_MANUAL_COMMAND_TIMESTAMP]: firebase.firestore.Timestamp.now(),
 		});
 		setTimeout(() => {
-			this._refCommand.update({
-				[rh.KEY_COMMAND_TYPE]: ""
+			this._refManualCommandDoc.update({
+				[rh.KEY_MANUAL_COMMAND_TYPE]: ""
 			});
 		}, 2000);
 	}
-	updateIsStreaming(isStreaming) {
-		this._refSettings.update({
-			[rh.KEY_SETTINGS_IS_STEAMING]: isStreaming
-		});
-	}
-	updateDistanceThresholdCm(distanceThresholdCm) {
-		this._refSettings.update({
-			[rh.KEY_SETTINGS_DISTANCE_CM]: distanceThresholdCm
-		});
-	}
-	updateCoolDownTimeS(coolDownTimeS) {
-		this._refSettings.update({
-			[rh.KEY_SETTINGS_COOL_DOWN_TIME_S]: coolDownTimeS
+	updateFeedbackStreamIsActive(isFeedbackStreamActive) {
+		this._refFeedbackStreamDoc.update({
+			[rh.KEY_FEEDBACK_STREAM_IS_ACTIVE]: isFeedbackStreamActive
 		});
 	}
 	updateThresholdSettings(distanceThresholdCm, coolDownTimeS) {
-		this._refSettings.update({
-			[rh.KEY_SETTINGS_DISTANCE_CM]: distanceThresholdCm,
-			[rh.KEY_SETTINGS_COOL_DOWN_TIME_S]: coolDownTimeS
+		this._refSecuritySystemDoc.update({
+			[rh.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD]: distanceThresholdCm,
+			[rh.KEY_SECURITY_SYSTEM_COOL_DOWN_TIME_THRESHOLD]: coolDownTimeS
 		});
 	}
-	updateIsMonitoring(isMonitoring) {
-		this._refSettings.update({
-			[rh.KEY_SETTINGS_IS_MONITORING]: isMonitoring
+	updateSecuritySystemIsActive(isSecuritySystemActive) {
+		this._refSecuritySystemDoc.update({
+			[rh.KEY_SECURITY_SYSTEM_IS_ACTIVE]: isSecuritySystemActive
 		});
 	}
 	// Getters for each field
-	get distanceReading() {
-		return this._readingDocument.get(rh.KEY_READING_DISTANCE) || -1;
+	get isFeedbackStreamActive() {
+		return this._feedbackStreamDocument.get(rh.KEY_FEEDBACK_STREAM_IS_ACTIVE);
 	}
-	get isStreaming() {
-		return this._settingsDocument.get(rh.KEY_SETTINGS_IS_STEAMING);
+	get streamCurrentDistance() {
+		return this._feedbackStreamDocument.get(rh.KEY_FEEDBACK_STREAM_CURRENT_DISTANCE) || -1;
 	}
-	get distanceThresholdCm() {
-		return this._settingsDocument.get(rh.KEY_SETTINGS_DISTANCE_CM) || -1;
+	get streamCurrentTime() {
+		return this._feedbackStreamDocument.get(rh.KEY_FEEDBACK_STREAM_TIME_SINCE_LAST_SECURITY_PHOTO) || -1;
 	}
-	get coolDownTimeS() {
-		return this._settingsDocument.get(rh.KEY_SETTINGS_COOL_DOWN_TIME_S) || -1
+
+	get isSecuritySystemActive() {
+		return this._securitySystemDocument.get(rh.KEY_SECURITY_SYSTEM_IS_ACTIVE);
 	}
-	get isMonitoring() {
-		return this._settingsDocument.get(rh.KEY_SETTINGS_IS_MONITORING);
+	get distanceThreshold() {
+		return this._securitySystemDocument.get(rh.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD) || -1;
+	}
+	get timeThreshold() {
+		return this._securitySystemDocument.get(rh.KEY_SECURITY_SYSTEM_COOL_DOWN_TIME_THRESHOLD) || -1
 	}
 }
 
-// Pictures List page
-rh.Pic = class {
+// Photos List page
+rh.Photo = class {
 	constructor(id, url, caption) {
 		this.id = id;
 		this.url = url;
@@ -219,18 +230,30 @@ rh.Pic = class {
 	}
 }
 
-rh.FbPicturesManager = class {
+rh.FbPhotosCollectionManager = class {
 	constructor() {
+		this._latestDocument = {};
 		this._documentSnapshots = [];
 		this._unsubscribe = null;
-		this._ref = firebase.firestore().collection(rh.COLLECTION_PICS);
+		this._ref = firebase.firestore().collection(rh.COLLECTION_PHOTOS);
 	}
 	beginListening(changeListener) {
-		this._unsubscribe = this._ref.orderBy(rh.KEY_PIC_LAST_TOUCHED, "desc").limit(50).onSnapshot((querySnapshot) => {
+		this._unsubscribe = this._ref.orderBy(rh.KEY_PHOTO_CREATED, "desc").limit(50).onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
 		});
 	}
+	beginListeningForLatestPhoto(changeListener) {
+		this._unsubscribe = this._ref.orderBy(rh.KEY_PHOTO_CREATED, "desc").limit(1).onSnapshot((querySnapshot) => {
+			this._documentSnapshots = querySnapshot.docs;			
+			this._latestDocument = null;
+			if (querySnapshot.docs.length > 0) {
+				this._latestDocument = querySnapshot.docs[0];
+			}
+			changeListener();
+		});
+	}
+
 	stopListening() {
 		this._unsubscribe();
 	}
@@ -239,47 +262,32 @@ rh.FbPicturesManager = class {
 		return this._documentSnapshots.length;
 	}
 
-	getPicAtIndex(index) {
-		return new rh.Pic(
+	getPhotoAtIndex(index) {
+		return new rh.Photo(
 			this._documentSnapshots[index].id,
-			this._documentSnapshots[index].get(rh.KEY_PIC_URL),
-			this._documentSnapshots[index].get(rh.KEY_PIC_CAPTION)
+			this._documentSnapshots[index].get(rh.KEY_PHOTO_URL),
+			this._documentSnapshots[index].get(rh.KEY_PHOTO_CAPTION)
 		);
+	}
+	get latestUrl() {
+		return this._latestDocument.get(rh.KEY_PHOTO_URL);
+	}
+	get latestCaption() {
+		return this._latestDocument.get(rh.KEY_PHOTO_CAPTION);
 	}
 }
 
 rh.ListPageController = class {
 	constructor() {
-		rh.fbPicturesManager.beginListening(this.updateList.bind(this));
-		$("#addPicDialog").on("show.bs.modal", function () {
-			$("#inputUrl").val("");
-			$("#inputCaption").val("");
-		});
-		$("#addPicDialog").on("shown.bs.modal", function () {
-			$("#inputUrl").trigger("focus");
-		});
-		$("#submitAddPic").click(() => {
-			const url = $("#inputUrl").val();
-			const caption = $("#inputCaption").val();
-			rh.fbPicturesManager.add(url, caption);
-		});
-		$("#inputCaption").keypress(function (e) {
-			if (e.which == 13) {
-				const url = $("#inputUrl").val();
-				const caption = $("#inputCaption").val();
-				rh.fbPicturesManager.add(url, caption);
-				$('#addPicDialog').modal('hide')
-				return false;
-			}
-		});
+		rh.fbPhotosCollectionManager.beginListening(this.updateList.bind(this));
 	}
+
 	updateList() {
-		console.log("Update the  list on the page.", this);
 		$("#columns").removeAttr("id").hide();
 		let $newList = $("<div></div>").attr("id", "columns");
-		for (let k = 0; k < rh.fbPicturesManager.length; k++) {
+		for (let k = 0; k < rh.fbPhotosCollectionManager.length; k++) {
 			const $newCard = this.createCard(
-				rh.fbPicturesManager.getPicAtIndex(k)
+				rh.fbPhotosCollectionManager.getPhotoAtIndex(k)
 			);
 			$newList.append($newCard);
 		}
@@ -287,28 +295,24 @@ rh.ListPageController = class {
 	}
 
 	createCard(pic) {
-		console.log(pic);
 		const $newCard = $(`<div class="pin" id="${pic.id}"><img src="${pic.url}" alt="${pic.caption}"><p class="caption">${pic.caption}</p></div>`);
 		$newCard.click((event) => {
 			console.log("Save the id", pic.id, " then change pages");
-			window.location.href = `/pic.html?id=${pic.id}`; // Change the page to the detail view
+			window.location.href = `/photo.html?id=${pic.id}`; // Change the page to the detail view
 		});
 		return $newCard;
 	}
 }
 
 // Detail page.
-rh.FbSinglePicManager = class {
+rh.FbSinglePhotoManager = class {
 	constructor(picId) {
 		this._document = {};
 		this._unsubscribe = null;
-		this._ref = firebase.firestore().collection(rh.COLLECTION_PICS).doc(picId);
-		console.log('this._ref.path :', this._ref.path);
+		this._ref = firebase.firestore().collection(rh.COLLECTION_PHOTOS).doc(picId);
 	}
 	beginListening(changeListener) {
-		console.log("Listen for changes to this pic");
 		this._unsubscribe = this._ref.onSnapshot((doc) => {
-			console.log("Pic updated ", doc);
 			if (doc.exists) {
 				this._document = doc;
 				changeListener();
@@ -324,8 +328,8 @@ rh.FbSinglePicManager = class {
 
 	update(caption) {
 		this._ref.update({
-			[rh.KEY_PIC_CAPTION]: caption,
-			[rh.KEY_PIC_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			[rh.KEY_PHOTO_CAPTION]: caption,
+			[rh.KEY_PHOTO_CREATED]: firebase.firestore.Timestamp.now(),
 		}).then(() => {
 			console.log("Document has been updated");
 		});
@@ -336,20 +340,20 @@ rh.FbSinglePicManager = class {
 	}
 
 	get caption() {
-		return this._document.get(rh.KEY_PIC_CAPTION);
+		return this._document.get(rh.KEY_PHOTO_CAPTION);
 	}
 
 	get url() {
-		return this._document.get(rh.KEY_PIC_URL);
+		return this._document.get(rh.KEY_PHOTO_URL);
 	}
 };
 
 
 rh.DetailPageController = class {
 	constructor() {
-		rh.fbSinglePicManager.beginListening(this.updateView.bind(this));
+		rh.fbSinglePhotoManager.beginListening(this.updateView.bind(this));
 		$("#editCaptionDialog").on("show.bs.modal", function () {
-			$("#inputCaption").val(rh.fbSinglePicManager.caption);
+			$("#inputCaption").val(rh.fbSinglePhotoManager.caption);
 		});
 		$("#editCaptionDialog").on("shown.bs.modal", function () {
 			$("#inputCaption").trigger("focus");
@@ -357,26 +361,26 @@ rh.DetailPageController = class {
 		$("#inputCaption").keypress(function (e) {
 			if (e.which == 13) {
 				const caption = $("#inputCaption").val();
-				rh.fbSinglePicManager.update(caption);
+				rh.fbSinglePhotoManager.update(caption);
 				$('#editCaptionDialog').modal('hide')
 				return false;
 			}
 		});
 		$("#submitEditCaption").click(() => {
 			const caption = $("#inputCaption").val();
-			rh.fbSinglePicManager.update(caption);
+			rh.fbSinglePhotoManager.update(caption);
 		});
-		$("#submitDeletePic").click(() => {
-			rh.fbSinglePicManager.delete().then(() => {
+		$("#submitDeletePhoto").click(() => {
+			rh.fbSinglePhotoManager.delete().then(() => {
 				window.location.href = "/"; // Go back to the list of pics.
 			});;
 		});
 	}
 	updateView() {
-		$("#image").attr("src", rh.fbSinglePicManager.url);
-		$("#image").attr("alt", rh.fbSinglePicManager.caption);
-		$("#image").attr("title", rh.fbSinglePicManager.caption);
-		$("#caption").html(rh.fbSinglePicManager.caption);
+		$("#image").attr("src", rh.fbSinglePhotoManager.url);
+		$("#image").attr("alt", rh.fbSinglePhotoManager.caption);
+		$("#image").attr("title", rh.fbSinglePhotoManager.caption);
+		$("#caption").html(rh.fbSinglePhotoManager.caption);
 	}
 }
 
@@ -385,25 +389,25 @@ $(document).ready(() => {
 	console.log("Ready");
 	if ($("#settingsPage").length) {
 		console.log("On the settings page");
-		rh.fbSettingsManager = new rh.FbSettingsManager();
+		rh.fbSettingsPageDocumentManager = new rh.FbSettingsPageDocumentManager();
+		rh.fbPhotosCollectionManager = new rh.FbPhotosCollectionManager();
 		new rh.SettingsPageController();
 	}
 	if ($("#listPage").length) {
 		console.log("On the list page");
-		rh.fbPicturesManager = new rh.FbPicturesManager();
+		rh.fbPhotosCollectionManager = new rh.FbPhotosCollectionManager();
 		new rh.ListPageController();
 	}
 	if ($("#detailPage").length) {
 		console.log("On the detail page");
 		const queryString = window.location.search;
-		console.log(queryString);
 		const urlParams = new URLSearchParams(queryString);
 		const picId = urlParams.get("id");
 		if (picId) {
-			rh.fbSinglePicManager = new rh.FbSinglePicManager(picId);
+			rh.fbSinglePhotoManager = new rh.FbSinglePhotoManager(picId);
 			new rh.DetailPageController();
 		} else {
-			console.log("There is no pic id in storage to use.  Abort!");
+			console.log("There is no pic id to use.  Abort!");
 			window.location.href = "/"; // Go back to the home page (ListPage)
 		}
 	}
