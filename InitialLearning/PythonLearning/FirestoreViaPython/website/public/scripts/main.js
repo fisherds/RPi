@@ -5,6 +5,7 @@ rh.COLLECTION_PHOTOS = "Photos";
 rh.KEY_PHOTO_CAPTION = "caption";
 rh.KEY_PHOTO_CREATED = "created";
 rh.KEY_PHOTO_URL = "url";
+
 rh.COLLECTION_SETTINGS_PAGE = "SettingsPage";
 // Manual Command document
 rh.DOC_ID_MANUAL_COMMAND = "manualCommand";
