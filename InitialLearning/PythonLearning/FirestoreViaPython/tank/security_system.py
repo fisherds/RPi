@@ -17,23 +17,23 @@ class PhotosCollectionManager():
     
     """ Handles Firestore interactions for Photo objects. """
     def __init__(self):
-        self.ref = firestore.client().db.collection(self.COLLECTION_PHOTOS)
+        self.ref = firestore.client().collection(self.COLLECTION_PHOTOS)
         self._callback_done = threading.Event()
 
         # Coming later
         self.bucket = storage.bucket()
 
-    def send_photo(photo, caption):
+    def send_photo(self, photo, caption):
         print(f"Send photo with caption {caption}")
 
         # TODO: Send the photo to Firebase storage and save the download url
 
         # TODO: use the download url
-        download_url = "image/no_photo_available.png"
+        download_url = "images/no_photo_available.png"
 
 
         # Save a Firestore document for the photo
-        ref_photos_collection.add({
+        self.ref.add({
             self.KEY_PHOTO_CAPTION: caption,
             self.KEY_PHOTO_URL: download_url,
             self.KEY_PHOTO_CREATED: firestore.SERVER_TIMESTAMP
@@ -48,8 +48,8 @@ class SettingsPageDocumentManager():
     DOC_ID_MANUAL_COMMAND = "manualCommand"
     KEY_MANUAL_COMMAND_TYPE = "type"
     VALUE_MANUAL_COMMAND_TAKE_PHOTO_TYPE = "takePhoto"
-    KEY_MANUAL_COMMAND_PAYLOAD = "payload"     # Unused
-    KEY_MANUAL_COMMAND_TIMESTAMP = "timestamp"
+    KEY_MANUAL_COMMAND_PAYLOAD = "payload"  # Unused
+    KEY_MANUAL_COMMAND_TIMESTAMP = "timestamp"  # Unused
     # Feedback Stream document
     DOC_ID_FEEDBACK_STREAM = "feedbackStream"
     KEY_FEEDBACK_STREAM_IS_ACTIVE = "isActive"
@@ -77,9 +77,9 @@ class SettingsPageDocumentManager():
         self.time_threshold = 3600
         
         # Internal variables.
-        self._ref_manual_command = firestore.client().db.collection(self.COLLECTION_SETTINGS_PAGE).document(self.DOC_ID_MANUAL_COMMAND)
-        self._ref_feedback_stream = firestore.client().db.collection(self.COLLECTION_SETTINGS_PAGE).document(self.DOC_ID_FEEDBACK_STREAM)
-        self._ref_security_system = firestore.client().db.collection(self.COLLECTION_SETTINGS_PAGE).document(self.DOC_ID_SECURITY_SYSTEM)
+        self._ref_manual_command = firestore.client().collection(self.COLLECTION_SETTINGS_PAGE).document(self.DOC_ID_MANUAL_COMMAND)
+        self._ref_feedback_stream = firestore.client().collection(self.COLLECTION_SETTINGS_PAGE).document(self.DOC_ID_FEEDBACK_STREAM)
+        self._ref_security_system = firestore.client().collection(self.COLLECTION_SETTINGS_PAGE).document(self.DOC_ID_SECURITY_SYSTEM)
         self._callback_done = threading.Event()
 
     # Commands - The Pi listens for commands (no need to send them)
@@ -99,8 +99,8 @@ class SettingsPageDocumentManager():
         for doc in docs:
             if doc.exists:
                 doc_data = doc.to_dict()
-                self.command_type = doc_data.get(self.KEY_COMMAND_TYPE)
-                self.command_payload = doc_data.get(self.KEY_COMMAND_PAYLOAD)
+                self.command_type = doc_data.get(self.KEY_MANUAL_COMMAND_TYPE)
+                self.command_payload = doc_data.get(self.KEY_MANUAL_COMMAND_PAYLOAD)
                 if self.command_payload is not None:
                     print(f"json parse the payload {self.command_payload}")
                     self.command_payload = json.loads(self.command_payload)
@@ -109,7 +109,7 @@ class SettingsPageDocumentManager():
         self._callback_done.set()
 
     # Feedback Stream - The Pi listens for the isActive boolean and sends feedback data
-    def add_feedback_stream_listener(self, callback):
+    def add_feedback_stream_listener(self, callback=None):
         """ Method used to setup listening for the Feedback Stream document.  
             Note: You probably don't need the callback in this method, just here for consistency.
         Usage:
@@ -132,14 +132,14 @@ class SettingsPageDocumentManager():
                     self.feedback_stream_callback() # Calls your callback, so you know a command arrived.
         self._callback_done.set()
 
-    def send_feedback_stream_data(distance, time):
-        self._ref_feedback_stream.set({
-            self.KEY_FEEDBACK_STREAM_CURRENT_DISTANCE: distance,
+    def send_feedback_stream_data(self, distance, time):
+        self._ref_feedback_stream.update({
+            self.KEY_FEEDBACK_STREAM_CURRENT_DISTANCE: round(distance),
             self.KEY_FEEDBACK_STREAM_TIME_SINCE_LAST_SECURITY_PHOTO: time
         })
     
     # Security System - The Pi listens for Security System settings (no need to send them)
-    def add_security_system_listener(self, callback):
+    def add_security_system_listener(self, callback=None):
         """ Method used to setup listening for the Feedback Stream document.  
             Note: You probably don't need the callback in this method, just here for consistency.
         Usage:
@@ -157,8 +157,8 @@ class SettingsPageDocumentManager():
             if doc.exists:
                 doc_data = doc.to_dict()
                 self.is_security_system_active = doc_data.get(self.KEY_SECURITY_SYSTEM_IS_ACTIVE)
-                self.distance_threshold = doc_data.get(self.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD)
-                self.time_threshold = doc_data.get(self.KEY_SECURITY_SYSTEM_COOL_DOWN_TIME_THRESHOLD)
+                self.distance_threshold = float(doc_data.get(self.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD))
+                self.time_threshold = int(doc_data.get(self.KEY_SECURITY_SYSTEM_COOL_DOWN_TIME_THRESHOLD))
                 # Note: a callback is probably not useful for this one, just the values.
                 if self.security_system_callback is not None:
                     self.security_system_callback()
@@ -184,11 +184,11 @@ class PiTank():
             photo, caption = self.take_photo()
             self.photos_manager.send_photo(photo, caption)
 
-    def take_photo():
+    def take_photo(self):
         """ Returns a photo and a caption. """
         tz_NY = pytz.timezone('America/New_York') 
         datetime_NY = datetime.now(tz_NY)
-        caption = f"NY time: {datetime_NY.strftime('%H:%M:%S')}"
+        caption = f"{datetime_NY.strftime('%A, %b %d %Y @ %l:%M:%S %p')}"
 
         print("TODO: Take and send a photo to the Firestore", caption)
         photo = None
@@ -196,6 +196,7 @@ class PiTank():
 
 
 if __name__ == '__main__':
+    print("Initialize Firebase4")
     # Initialize Firebase
     cred = credentials.Certificate('serviceAccountKey.json')
     firebase_admin.initialize_app(cred, {
@@ -205,27 +206,29 @@ if __name__ == '__main__':
     # Main objects
     photos_manager = PhotosCollectionManager()
     settings_page_manager = SettingsPageDocumentManager()
-    robot = PiTank(photos_manager, settings_page_manager)
+    pi_tank = PiTank(photos_manager, settings_page_manager)
 
     # Helper variables for the main loop
-    last_stream_time = 0
-    last_monitor_time = 0
+    last_stream_time = time.time()
+    last_security_photo_time = time.time()
     while True:
-        time.sleep(0.5)  # 2 readings per second
-        reading = robot.ultrasonic.get_distance()
+        time.sleep(0.5)  # 2 distance_readings per second
+        distance_reading = pi_tank.robot.ultrasonic_sensor.get_distance()
+        elapsed_stream_time = time.time() - last_stream_time  # Time since the last feedback stream update
+        elapsed_security_photo_time = time.time() - last_security_photo_time  # Time since the security system photo
         
-        if settings_page_manager.is_streaming:
-            elapsed_stream_time = time.time() - last_stream_time
-            if elapsed_stream_time > 1.5:  #  Stream every 1.5 seconds
-                print(f"Sent reading {reading} @ {round(time.time())}")
-                settings_page_manager.send_reading(reading)
+        if settings_page_manager.is_feedback_stream_active:            
+            if elapsed_stream_time > 1.5:  # Stream every 1.5 seconds
+                print(f"Sent distance_reading {distance_reading} @ {round(elapsed_security_photo_time)}")
+                settings_page_manager.send_feedback_stream_data(distance_reading, round(elapsed_security_photo_time))
                 last_stream_time = time.time()
 
-        if settings_page_manager.is_monitoring:          
-            if reading < settings_page_manager.distance_threshold_cm:
-                elapsed_monitor_time = time.time() - last_monitor_time
-                if elapsed_stream_time > settings_page_manager.cool_down_time_s:
-                    print(f"Sent reading {reading} @ {round(time.time())}")
-                    (photo, caption) = robot.take_photo()
+        if settings_page_manager.is_security_system_active:
+            print("Distance:", distance_reading, settings_page_manager.distance_threshold)
+            if distance_reading < settings_page_manager.distance_threshold:
+                print("Time:", elapsed_security_photo_time, settings_page_manager.time_threshold)
+                if elapsed_security_photo_time > settings_page_manager.time_threshold:
+                    print(f"The Security System criteria have been met.  Taking a picture!")
+                    (photo, caption) = pi_tank.take_photo()
                     photos_manager.send_photo(photo, caption)
-                    last_monitor_time = time.time()
+                    last_security_photo_time = time.time()

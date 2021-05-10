@@ -6,5 +6,5 @@ class RoseBot:
   def __init__(self):
     self.drive_system = rosebot_drive_system.DriveSystem()
     self.servos = rosebot_servos.Servos()
-    self.ultrasonic = rosebot_sensors.UltrasonicSensor()
+    self.ultrasonic_sensor = rosebot_sensors.UltrasonicSensor()
     self.line_sensors = rosebot_sensors.LineSensors()

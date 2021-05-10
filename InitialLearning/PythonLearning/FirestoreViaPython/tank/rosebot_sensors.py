@@ -8,6 +8,7 @@ class UltrasonicSensor:
     def get_distance(self):
         return self.sensor.distance * 100
 
+
 class LineSensors:
     def __init__(self):
         self.left_line = gz.LineSensor(20)

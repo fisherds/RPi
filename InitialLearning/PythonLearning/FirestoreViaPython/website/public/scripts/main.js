@@ -141,7 +141,7 @@ rh.FbSettingsPageDocumentManager = class {
 				this._feedbackStreamDocument = docSnapshot;
 				changeListener();
 			} else {
-				console.log("There is no feedback stream data available");
+				console.log("There is no feedback stream document.  Make one.");
 				this._refFeedbackStreamDoc.set({
 					[rh.KEY_FEEDBACK_STREAM_IS_ACTIVE]: false,
 				});
@@ -159,6 +159,7 @@ rh.FbSettingsPageDocumentManager = class {
 				this._securitySystemDocument = docSnapshot;
 				changeListener();
 			} else {
+				console.log("There is no security system document.  Make one.");
 				this._refSecuritySystemDoc.set({
 					[rh.KEY_FEEDBACK_STREAM_IS_ACTIVE]: false,
 					[rh.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD]: 60,
