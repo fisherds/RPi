@@ -3,6 +3,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
+# from google.cloud import storage
+import os
 import pytz
 import rosebot
 import threading
@@ -20,17 +22,23 @@ class PhotosCollectionManager():
         self.ref = firestore.client().collection(self.COLLECTION_PHOTOS)
         self._callback_done = threading.Event()
 
-        # Coming later
-        self.bucket = storage.bucket()
-
-    def send_photo(self, photo, caption):
+    def send_photo(self, photoFilename, caption):
         print(f"Send photo with caption {caption}")
+
+        try:
+            image_blob = storage.bucket("fisherds-movie-quotes-571d2.appspot.com").blob("test_image")
+            image_path = "/home/pi/VSCode/InitialLearning/PythonLearning/FirestoreViaPython/tank/testimage.jpeg"        
+            image_blob.upload_from_filename(image_path)
+
+        except Exception as err:
+            print("An exception occurred", err)
+    
+        print("File uploaded")
 
         # TODO: Send the photo to Firebase storage and save the download url
 
         # TODO: use the download url
         download_url = "images/no_photo_available.png"
-
 
         # Save a Firestore document for the photo
         self.ref.add({
@@ -191,8 +199,8 @@ class PiTank():
         caption = f"{datetime_NY.strftime('%A, %b %d %Y @ %l:%M:%S %p')}"
 
         print("TODO: Take and send a photo to the Firestore", caption)
-        photo = None
-        return photo, caption
+        photoFilename = None
+        return photoFilename, caption
 
 
 if __name__ == '__main__':
@@ -200,7 +208,7 @@ if __name__ == '__main__':
     # Initialize Firebase
     cred = credentials.Certificate('serviceAccountKey.json')
     firebase_admin.initialize_app(cred, {
-        'storageBucket': 'fisherds-bucket.appspot.com'
+        'storageBucket': 'fisherds-movie-quotes-571d2.appspot.com'
     })
 
     # Main objects
@@ -218,7 +226,7 @@ if __name__ == '__main__':
         elapsed_security_photo_time = time.time() - last_security_photo_time  # Time since the security system photo
         
         if settings_page_manager.is_feedback_stream_active:            
-            if elapsed_stream_time > 1.5:  # Stream every 1.5 seconds
+            if elapsed_stream_time > 1.0:  # Stream every 1.0 seconds
                 print(f"Sent distance_reading {distance_reading} @ {round(elapsed_security_photo_time)}")
                 settings_page_manager.send_feedback_stream_data(distance_reading, round(elapsed_security_photo_time))
                 last_stream_time = time.time()
