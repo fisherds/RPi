@@ -23,28 +23,27 @@ class PhotosCollectionManager():
         self._callback_done = threading.Event()
 
     def send_photo(self, photoFilename, caption):
-        print(f"Send photo with caption {caption}")
-
+        print(f"Uploading photo with caption {caption}")
+        document_timestamp, doc_reference = self.ref.add({
+            self.KEY_PHOTO_CAPTION: caption,
+            self.KEY_PHOTO_CREATED: firestore.SERVER_TIMESTAMP
+        })
+        print("Document ID: ", doc_reference.id)
+        
         try:
-            image_blob = storage.bucket("fisherds-movie-quotes-571d2.appspot.com").blob("test_image")
+            image_blob = storage.bucket().blob(f"photos/{doc_reference.id}")
             image_path = "/home/pi/VSCode/InitialLearning/PythonLearning/FirestoreViaPython/tank/testimage.jpeg"        
             image_blob.upload_from_filename(image_path)
+            image_blob.make_public()
 
         except Exception as err:
-            print("An exception occurred", err)
+            print("An exception occurred during upload", err)
     
-        print("File uploaded")
-
-        # TODO: Send the photo to Firebase storage and save the download url
-
-        # TODO: use the download url
-        download_url = "images/no_photo_available.png"
+        print("File uploaded", image_blob.public_url)
 
         # Save a Firestore document for the photo
-        self.ref.add({
-            self.KEY_PHOTO_CAPTION: caption,
-            self.KEY_PHOTO_URL: download_url,
-            self.KEY_PHOTO_CREATED: firestore.SERVER_TIMESTAMP
+        doc_reference.update({
+            self.KEY_PHOTO_URL: image_blob.public_url,
         })
 
 
@@ -232,9 +231,9 @@ if __name__ == '__main__':
                 last_stream_time = time.time()
 
         if settings_page_manager.is_security_system_active:
-            print("Distance:", distance_reading, settings_page_manager.distance_threshold)
+            print("SS Distance:", distance_reading, settings_page_manager.distance_threshold)
             if distance_reading < settings_page_manager.distance_threshold:
-                print("Time:", elapsed_security_photo_time, settings_page_manager.time_threshold)
+                print("SS Time:", elapsed_security_photo_time, settings_page_manager.time_threshold)
                 if elapsed_security_photo_time > settings_page_manager.time_threshold:
                     print(f"The Security System criteria have been met.  Taking a picture!")
                     (photo, caption) = pi_tank.take_photo()
