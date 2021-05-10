@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials
@@ -193,7 +194,8 @@ class PiTank():
         tz_NY = pytz.timezone('America/New_York') 
         datetime_NY = datetime.now(tz_NY)
         caption = f"{datetime_NY.strftime('%A, %b %d %Y @ %l:%M:%S %p')}"
-        filename = f"{datetime_NY.strftime('%B-%d-%Y@%l:%M:%S%p')}.jpg"
+        # Note: you have to manually make the images folder.
+        filename = f"images/{datetime_NY.strftime('%B-%d-%Y@%H:%M:%S')}.jpg"
         print(f"Taking a picture at {caption}")
         print(f"Saving it as {filename}")
         self.camera.capture(filename)
@@ -201,9 +203,11 @@ class PiTank():
 
 
 if __name__ == '__main__':
-    print("Initialize Firebase4")
+    print("Ready")
     # Initialize Firebase
-    cred = credentials.Certificate('serviceAccountKey.json')
+    # cred = credentials.Certificate('serviceAccountKey.json')
+    cred = credentials.Certificate('//home/pi/VSCode/InitialLearning/PythonLearning/FirestoreViaPython/tank/serviceAccountKey.json')
+    
     firebase_admin.initialize_app(cred, {
         'storageBucket': 'fisherds-movie-quotes-571d2.appspot.com'
     })
@@ -224,7 +228,7 @@ if __name__ == '__main__':
         
         if settings_page_manager.is_feedback_stream_active:            
             if elapsed_stream_time > 1.0:  # Stream every 1.0 seconds
-                print(f"Sent distance_reading {distance_reading} @ {round(elapsed_security_photo_time)}")
+                # print(f"Sent distance_reading {distance_reading} @ {round(elapsed_security_photo_time)}")
                 settings_page_manager.send_feedback_stream_data(distance_reading, round(elapsed_security_photo_time))
                 last_stream_time = time.time()
 
