@@ -83,12 +83,16 @@ rh.SettingsPageController = class {
 		const coolDownTimeS = $("#coolDownTimeSInput").val();
 		rh.fbSettingsPageDocumentManager.updateThresholdSettings(distanceThresholdCm, coolDownTimeS);
 	}
+	
 	updateLatestPhoto() {
 		const url = rh.fbPhotosCollectionManager.latestUrl;
 		const caption = rh.fbPhotosCollectionManager.latestCaption;
 
 		const lastestPhoto = document.querySelector("#latestPhoto");
-		latestPhoto.src = url;
+		if (latestPhoto.src.length > 0) {
+			// Might need just a sec before it has a url.
+			latestPhoto.src = url;
+		}
 		latestPhoto.alt = caption;
 
 		document.querySelector("#latestPhotoCaption").innerHTML = caption;
@@ -288,9 +292,11 @@ rh.ListPageController = class {
 		$("#columns").removeAttr("id").hide();
 		let $newList = $("<div></div>").attr("id", "columns");
 		for (let k = 0; k < rh.fbPhotosCollectionManager.length; k++) {
-			const $newCard = this.createCard(
-				rh.fbPhotosCollectionManager.getPhotoAtIndex(k)
-			);
+			const photo = rh.fbPhotosCollectionManager.getPhotoAtIndex(k)
+			if (!photo.url) {
+				continue;
+			}
+			const $newCard = this.createCard(photo);
 			$newList.append($newCard);
 		}
 		$("#listPage").append($newList);

@@ -3,8 +3,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
-# from google.cloud import storage
-import os
+from picamera import PiCamera
 import pytz
 import rosebot
 import threading
@@ -22,26 +21,22 @@ class PhotosCollectionManager():
         self.ref = firestore.client().collection(self.COLLECTION_PHOTOS)
         self._callback_done = threading.Event()
 
-    def send_photo(self, photoFilename, caption):
+    def send_photo(self, image_path, caption):
         print(f"Uploading photo with caption {caption}")
         document_timestamp, doc_reference = self.ref.add({
             self.KEY_PHOTO_CAPTION: caption,
             self.KEY_PHOTO_CREATED: firestore.SERVER_TIMESTAMP
         })
-        print("Document ID: ", doc_reference.id)
-        
+        print("Created the imageless Firestore document. id: ", doc_reference.id)
+        # Now add the image.
         try:
             image_blob = storage.bucket().blob(f"photos/{doc_reference.id}")
-            image_path = "/home/pi/VSCode/InitialLearning/PythonLearning/FirestoreViaPython/tank/testimage.jpeg"        
             image_blob.upload_from_filename(image_path)
             image_blob.make_public()
-
         except Exception as err:
             print("An exception occurred during upload", err)
-    
-        print("File uploaded", image_blob.public_url)
-
-        # Save a Firestore document for the photo
+        print("File uploaded. URL: ", image_blob.public_url)
+        # Add the image url to the Firestore document
         doc_reference.update({
             self.KEY_PHOTO_URL: image_blob.public_url,
         })
@@ -177,6 +172,8 @@ class PiTank():
         self.photos_manager = photos_manager
         self.settings_page_manager = settings_page_manager
         self.robot = rosebot.RoseBot()
+        self.camera = PiCamera()
+        self.camera.resolution = (1024, 768)
         
         self.settings_page_manager.add_command_listener(self.handle_command)
         self.settings_page_manager.add_feedback_stream_listener()  # Interestingly no callback is needed
@@ -196,10 +193,11 @@ class PiTank():
         tz_NY = pytz.timezone('America/New_York') 
         datetime_NY = datetime.now(tz_NY)
         caption = f"{datetime_NY.strftime('%A, %b %d %Y @ %l:%M:%S %p')}"
-
-        print("TODO: Take and send a photo to the Firestore", caption)
-        photoFilename = None
-        return photoFilename, caption
+        filename = f"{datetime_NY.strftime('%B-%d-%Y@%l:%M:%S%p')}.jpg"
+        print(f"Taking a picture at {caption}")
+        print(f"Saving it as {filename}")
+        self.camera.capture(filename)
+        return filename, caption
 
 
 if __name__ == '__main__':
@@ -231,11 +229,11 @@ if __name__ == '__main__':
                 last_stream_time = time.time()
 
         if settings_page_manager.is_security_system_active:
-            print("SS Distance:", distance_reading, settings_page_manager.distance_threshold)
+            print("SS Distance:", round(distance_reading))
             if distance_reading < settings_page_manager.distance_threshold:
-                print("SS Time:", elapsed_security_photo_time, settings_page_manager.time_threshold)
+                print("SS Time:", round(elapsed_security_photo_time))
                 if elapsed_security_photo_time > settings_page_manager.time_threshold:
                     print(f"The Security System criteria have been met.  Taking a picture!")
-                    (photo, caption) = pi_tank.take_photo()
-                    photos_manager.send_photo(photo, caption)
+                    (photo_filename, caption) = pi_tank.take_photo()
+                    photos_manager.send_photo(photo_filename, caption)
                     last_security_photo_time = time.time()
