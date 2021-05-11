@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import file_utils  # File utility functions
 import firebase_admin
+from firebase_admin import credentials
 import firebase_photos  # Photos collection
 import firebase_settings_page  # Settings Page documents
 import picamera
@@ -30,7 +31,7 @@ class PiTank():
             self.take_photo()
 
     def take_photo(self):
-        filename = self.photos_manager.get_filename()
+        filename = file_utils.get_filename()
         self.camera.capture(filename)
         self.photos_manager.add_photo(filename)
 
@@ -40,8 +41,8 @@ if __name__ == '__main__':
     # Initialize Firebase
     my_project_id = "fisherds-movie-quotes-571d2"
     # cred = firebase_admin.credentials.Certificate('serviceAccountKey.json')  # Works fine, but has a dependency on where the file is run from.
-    cred = firebase_admin.credentials.Certificate(f'{file_utils.get_directory()}/serviceAccountKey.json')
-    firebase_admin.initialize_app(cred, {"storageBucket": f"f{my_project_id}.appspot.com"})
+    cred = credentials.Certificate(f'{file_utils.get_directory()}/serviceAccountKey.json')
+    firebase_admin.initialize_app(cred, {"storageBucket": f"{my_project_id}.appspot.com"})
 
     # Main objects
     photos_manager = firebase_photos.PhotosCollectionManager()

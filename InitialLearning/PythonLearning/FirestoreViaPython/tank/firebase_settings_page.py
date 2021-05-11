@@ -1,4 +1,5 @@
-import firebase_admin
+from firebase_admin import firestore
+from firebase_admin import storage
 import threading
 
 class SettingsPageDocumentManager():
@@ -41,7 +42,7 @@ class SettingsPageDocumentManager():
         # --- End public properties section ---
 
         # Internal variables.
-        ref = firebase_admin.firestore.client().collection(self.COLLECTION_SETTINGS_PAGE)
+        ref = firestore.client().collection(self.COLLECTION_SETTINGS_PAGE)
         self._ref_manual_command = ref.document(self.DOC_ID_MANUAL_COMMAND)
         self._ref_feedback_stream = ref.document(self.DOC_ID_FEEDBACK_STREAM)
         self._ref_security_system = ref.document(self.DOC_ID_SECURITY_SYSTEM)
