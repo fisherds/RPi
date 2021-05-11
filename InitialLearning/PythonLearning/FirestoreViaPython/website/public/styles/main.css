@@ -71,3 +71,6 @@ hr {
     background-color: #80704e;
 }
 
+#latestPhoto {
+    max-height: 300px;
+}
