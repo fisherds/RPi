@@ -12,7 +12,7 @@
 <body>
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="/">Pi Security System</a>
-    <a href="/" class="btn bmd-btn-icon ml-auto">
+    <a href="/photos.html" class="btn bmd-btn-icon ml-auto">
       <i class="material-icons">photo_library</i>
     </a>
     &nbsp;&nbsp;
@@ -27,6 +27,8 @@
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="lr1">
         <button class="dropdown-item" type="button" data-toggle="modal" data-target="#editCaptionDialog"><i class="material-icons">edit</i>&nbsp;&nbsp;&nbsp;Edit</button>
         <button class="dropdown-item" type="button" data-toggle="modal" data-target="#deletePhotoDialog"><i class="material-icons">delete</i>&nbsp;&nbsp;&nbsp;Delete</button>
+        <button id="menuSignOut" class="dropdown-item" type="button"><i
+          class="material-icons">logout</i>&nbsp;&nbsp;&nbsp;Sign Out</button>
       </div>
     </div>
   </nav>
@@ -89,6 +91,7 @@
   </script>
   <script src="/__/firebase/7.18.0/firebase-app.js"></script>
   <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
   <script src="/__/firebase/init.js"></script>
   <script src="scripts/main.js"></script>
 </body>

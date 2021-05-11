@@ -14,29 +14,27 @@
 <body>
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">Pi Security System</a>
-  </nav>
-  <div id="loginPage" class="container page-container">
-
-    <div class="jumbotron">
-      <h1 class="display-4">Pi Security Camera</h1>
-      <p class="lead">With great power comes great responsibility.</p>
-      <hr class="my-4">
-      <p>Make sure to only use a security camera in appropriate places.</p>
-      <div class="form-group">
-        <label for="inputEmail" class="bmd-label-floating">Email</label>
-        <input type="email" class="form-control" id="inputEmail">
+    <a href="#" class="btn bmd-btn-icon ml-auto">
+      <i class="material-icons">photo_library</i>
+    </a>
+    &nbsp;&nbsp;
+    <a href="/settings.html" class="btn bmd-btn-icon">
+      <i class="material-icons">settings</i>
+    </a>
+    <div class="dropdown pull-xs-right">
+      <button class="btn bmd-btn-icon dropdown-toggle" type="button" id="lr1" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="lr1">
+        <button id="menuSignOut" class="dropdown-item" type="button"><i
+            class="material-icons">logout</i>&nbsp;&nbsp;&nbsp;Sign Out</button>
       </div>
-      <div class="form-group">
-        <label for="inputPassword" class="bmd-label-floating">Password</label>
-        <input type="password" class="form-control" id="inputPassword">
-      </div>
-  
-      <p class="lead text-right">
-        <button id="logInButton" class="btn btn-primary btn-lg" type="button">Log in</button>
-      </p>
     </div>
-
-    
+  </nav>
+  <div id="listPage" class="container page-container">
+    <div id="columns">
+    </div>
   </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>

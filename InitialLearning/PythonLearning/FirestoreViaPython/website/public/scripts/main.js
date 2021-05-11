@@ -24,8 +24,56 @@ rh.KEY_SECURITY_SYSTEM_IS_ACTIVE = "isActive";
 rh.KEY_SECURITY_SYSTEM_DISTANCE_THRESHOLD = "distanceThreshold";
 rh.KEY_SECURITY_SYSTEM_COOL_DOWN_TIME_THRESHOLD = "timeThreshold";
 
+rh.fbAuthManager = null;
 rh.fbPhotosCollectionManager = null;
 rh.fbSettingsPageDocumentManager = null;
+
+rh.FbAuthManager = class {
+	constructor() {
+		this._user = null;
+	}
+
+	beginListening(changeListener) {
+		firebase.auth().onAuthStateChanged((user) => {
+			this._user = user;
+			changeListener();
+		});
+	}
+
+	signIn(email, password) {
+		firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			alert("Existing account log in error", errorCode, errorMessage);
+		});
+	}
+
+	signOut() {
+		firebase.auth().signOut().catch((error) => {
+			console.log("Sign out error");
+		});
+	}
+
+	get isSignedIn() {
+		return !!this._user;
+	}
+
+	get uid() {
+		return this._user.uid;
+	}
+}
+
+// Login page
+rh.LoginPageController = class {
+	constructor() {
+		document.querySelector("#logInButton").onclick = (event) => {
+			const inputEmailEl = document.querySelector("#inputEmail");
+			const inputPasswordEl = document.querySelector("#inputPassword");
+			console.log(`Login for email: ${inputEmailEl.value} password:  ${inputPasswordEl.value}`);
+			rh.fbAuthManager.signIn(inputEmailEl.value, inputPasswordEl.value);
+		};
+	}
+}
 
 // Settings Page
 rh.SettingsPageController = class {
@@ -405,9 +453,26 @@ rh.DetailPageController = class {
 	}
 }
 
-/* Main */
-$(document).ready(() => {
-	console.log("Ready");
+rh.checkForRedirects = function() {
+	if (document.querySelector("#loginPage") && rh.fbAuthManager.isSignedIn) {
+		window.location.href = "/photos.html";
+	}
+	if (!document.querySelector("#loginPage") && !rh.fbAuthManager.isSignedIn) {
+		window.location.href = "/";
+	}
+};
+
+
+rh.initializePage = function() {
+	
+	if ($("#loginPage").length) {
+		console.log("On the login page");
+		new rh.LoginPageController();
+	} else {
+		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
+			rh.fbAuthManager.signOut();
+		});
+	}
 	if ($("#settingsPage").length) {
 		console.log("On the settings page");
 		rh.fbSettingsPageDocumentManager = new rh.FbSettingsPageDocumentManager();
@@ -432,4 +497,16 @@ $(document).ready(() => {
 			window.location.href = "/"; // Go back to the home page (ListPage)
 		}
 	}
+}
+
+/* Main */
+$(document).ready(() => {
+	console.log("Ready");
+	rh.fbAuthManager = new rh.FbAuthManager();
+	rh.fbAuthManager.beginListening(() => {
+		console.log("isSignedIn = ", rh.fbAuthManager.isSignedIn);
+		rh.checkForRedirects();
+		rh.initializePage();
+	});
+
 });
