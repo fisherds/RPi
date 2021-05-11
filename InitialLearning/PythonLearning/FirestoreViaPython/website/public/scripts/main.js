@@ -243,12 +243,14 @@ rh.FbPhotosCollectionManager = class {
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rh.COLLECTION_PHOTOS);
 	}
+
 	beginListening(changeListener) {
 		this._unsubscribe = this._ref.orderBy(rh.KEY_PHOTO_CREATED, "desc").limit(50).onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
 		});
 	}
+
 	beginListeningForLatestPhoto(changeListener) {
 		this._unsubscribe = this._ref.orderBy(rh.KEY_PHOTO_CREATED, "desc").limit(1).onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;			
@@ -258,6 +260,10 @@ rh.FbPhotosCollectionManager = class {
 			}
 			changeListener();
 		});
+	}
+
+	delete(documentId) {
+		this._ref.doc(documentId).delete();
 	}
 
 	stopListening() {
@@ -281,6 +287,7 @@ rh.FbPhotosCollectionManager = class {
 	get latestCaption() {
 		return this._latestDocument.get(rh.KEY_PHOTO_CAPTION);
 	}
+
 }
 
 rh.ListPageController = class {
@@ -303,10 +310,16 @@ rh.ListPageController = class {
 	}
 
 	createCard(pic) {
-		const $newCard = $(`<div class="pin" id="${pic.id}"><img src="${pic.url}" alt="${pic.caption}"><p class="caption">${pic.caption}</p></div>`);
+		const $newCard = $(`<div class="pin"><i data-doc-id="${pic.id}" class="delete-button material-icons">delete</i><img src="${pic.url}" alt="${pic.caption}"><p class="caption">${pic.caption}</p></div>`);
 		$newCard.click((event) => {
 			console.log("Save the id", pic.id, " then change pages");
 			window.location.href = `/photo.html?id=${pic.id}`; // Change the page to the detail view
+		});
+		$newCard.find(".delete-button").click((event) => {
+			console.log(`Delete ${pic.id}`);
+			rh.fbPhotosCollectionManager.delete(pic.id);
+			return false;
+
 		});
 		return $newCard;
 	}
